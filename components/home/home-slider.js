@@ -4,7 +4,6 @@ import Slider from "react-slick";
 
 function HomeSlider() {
   const settings = {
-    dots: true,
     infinite: true,
     speed: 600,
     slidesToShow: 1,
@@ -43,12 +42,7 @@ function HomeSlider() {
       <Col xs={22} sm={22} md={20} lg={18} xl={16}>
         <Slider {...settings}>
           {slides.map((slide, index) => (
-            <div
-              key={index}
-              style={{
-                width: "25%",
-              }}
-            >
+            <div key={index}>
               <div
                 style={{
                   display: "flex",
@@ -76,10 +70,18 @@ function HomeSlider() {
                 </button>
 
                 {/* Title */}
-                <h1 style={{ width: "35%", fontSize: "22px", fontWeight: "bold", lineHeight: "1.4" }}>{slide.title}</h1>
+                <h1
+                  style={{
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  {slide.title}
+                </h1>
 
-                {/* Description */}
-                <p style={{ width: "35%", fontSize: "15px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)" }}>{slide.text}</p>
+                {/* Description - hidden on small screens */}
+                <p className="slider-desc">{slide.text}</p>
 
                 {/* Bottom Button */}
                 <button
@@ -100,6 +102,22 @@ function HomeSlider() {
           ))}
         </Slider>
       </Col>
+
+      {/* Inline CSS */}
+      <style jsx>{`
+        .slider-desc {
+          font-size: 15px;
+          line-height: 1.6;
+          color: rgba(255, 255, 255, 0.9);
+          max-width: 35%;
+        }
+
+        @media (max-width: 768px) {
+          .slider-desc {
+            display: none;
+          }
+        }
+      `}</style>
     </Row>
   );
 }
