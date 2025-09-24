@@ -9,8 +9,17 @@ import FooterBtn from "../components/FooterBtn";
 import SendEmail from "../components/SendEmail";
 import useTranslation from "next-translate/useTranslation";
 
-import { ShareAltOutlined, FacebookFilled, TwitterOutlined, LinkedinFilled } from "@ant-design/icons";
-import { FacebookShareButton, TwitterShareButton, LinkedinShareButton } from "react-share";
+import {
+  ShareAltOutlined,
+  FacebookFilled,
+  TwitterOutlined,
+  LinkedinFilled,
+} from "@ant-design/icons";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+} from "react-share";
 
 const { TabPane } = Tabs;
 
@@ -35,9 +44,6 @@ const staticPostData = {
         <li>Тухайн бизнесийн үйл ажиллагаагаа 12 сар эрхэлж буй.</li>
         <li>Идэвхитэй хугацаа хэтэрсэн болон муу зээлийн түүхгүй байх.</li>
         <li>Ашиг орлогоороо түрээсийн төлбөрийг бүрэн төлөх боломжтой байх.</li>
-        <li>Эмнэлэгийн үйл ажиллагааны лиценз эсвэл зөвшөөрөлтэй байх.</li>
-        <li>Тоног төхөөрөмжийг ашиглах мэргэшсэн эмч, эмнэлгийн ажилтантай байх.</li>
-        <li>Тоног төхөөрөмжийг байрлуулах тохиромжтой орчин, нөхцөл бүрдэсэн байх.</li>
       </ul>
     `,
     individuals: `
@@ -46,13 +52,11 @@ const staticPostData = {
         <li>Орлого тодорхойлох баримтууд:
           <ol class="uk-list uk-list-bullet burduuleh_show">
             <li>Дансны хуулга;</li>
-            <li>Ажлын гэрээ;</li>
-            <li>Өөрийн машин механизмын гэрчилгээ;</li>
-            <li>Бизнес эрхлэгчийн бүртгэлийн гэрчилгээ;</li>
-            <li>Эмнэлэгийн үйл ажиллагааны лицензийн хуулбар;</li>
-            <li>Эмч, мэргэшсэн ажилтны дипломын хуулбар.</li>
+            <li>НДД хуулбар гэх мэт;</li>
           </ol>
         </li>
+        <li>Идэвхитэй зээлтэй бол зээлийн гэрээ, дансны хуулга.</li>
+
       </ul>
     `,
     legal_entities: `
@@ -62,19 +66,21 @@ const staticPostData = {
         <li>Сүүлийн 2 жилийн санхүүгийн тайлан;</li>
         <li>Эрх бүхий этгээдийн зөвшөөрөл;</li>
         <li>Бизнесийн орлого тодорхойлох баримтууд;</li>
-        <li>Эмнэлэгийн үйл ажиллагааны лиценз;</li>
-        <li>Эмч, мэргэшсэн ажилтны дипломын хуулбар;</li>
-        <li>Тоног төхөөрөмжийг байрлуулах барилга байгууламжийн гэрчилгээ;</li>
-        <li>Эмнэлэгийн үйл ажиллагааны стандартын гэрчилгээ (шаардлагатай бол).</li>
+       <li>Идэвхитэй зээлтэй бол зээлийн гэрээ, дансны хуулга.</li>
+
       </ul>
     `,
-    interest_rate: { first_value: "1.6", second_value: "1.8", gap: "0.1", degree: "90" },
+    interest_rate: {
+      first_value: "1.6",
+      second_value: "1.8",
+      gap: "0.1",
+      degree: "90",
+    },
     period: { value: "4", degree: "90" },
     fee: "0.5",
     header_img: "/images/back.jpg",
     pre_payment: { first_value: "20", gap: "10", degree: "30" },
     img: "/images/back.jpg",
-    lease_form: "lease-app-medical-equipment",
     footer_btn: { btn_text: "", btn_id: "", file: false },
     labels: {
       requirements: "Тавигдах шалгуур",
@@ -112,7 +118,13 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
 
   const renderContentChild = (value, className) => {
     let content = regex(value);
-    return <div key={className} className={"contentSection " + className} dangerouslySetInnerHTML={{ __html: content }} />;
+    return (
+      <div
+        key={className}
+        className={"contentSection " + className}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
   };
 
   const renderACF = () => {
@@ -135,7 +147,10 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
       )
         return null;
 
-      const label = acf.labels && acf.labels[key] ? acf.labels[key] : productLabels[key] || key;
+      const label =
+        acf.labels && acf.labels[key]
+          ? acf.labels[key]
+          : productLabels[key] || key;
 
       return (
         <div key={index} className="py-3">
@@ -155,7 +170,9 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
   };
 
   const shareUrl =
-    typeof window !== "undefined" ? `${window.location.origin}/medical-equipment-leasing` : "https://xacleasing.mn/medical-equipment-leasing";
+    typeof window !== "undefined"
+      ? `${window.location.origin}/medical-equipment-leasing`
+      : "https://xacleasing.mn/medical-equipment-leasing";
 
   const menu = (
     <Menu>
@@ -184,7 +201,11 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
     return (
       <>
         <Col xs={20} sm={20} lg={14}>
-          <div align="center" className="my-2" dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
+          <div
+            align="center"
+            className="my-2"
+            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+          />
         </Col>
         <Col span={20}>
           <ProductConditions post={post} />
@@ -199,17 +220,35 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
   const renderEmail = () => {
     return (
       <div className="d-flex justify-content-center">
-        <SendEmail subject={post.title.rendered} content={post.content.rendered} acf={post.acf} />
+        <SendEmail
+          subject={post.title.rendered}
+          content={post.content.rendered}
+          acf={post.acf}
+        />
       </div>
     );
   };
 
   const renderBackBtn = () => {
-    return <MyLink title="Буцах" url="/p/leasing-product" slug="leasing-product" type="c" className="btn btn-primary my-3" prefetch={false} />;
+    return (
+      <MyLink
+        title="Буцах"
+        url="/p/leasing-product"
+        slug="leasing-product"
+        type="c"
+        className="btn btn-primary my-3"
+        prefetch={false}
+      />
+    );
   };
 
   return (
-    <Layout menu={mainMenu} title={post.title.rendered} image={post.acf.header_img || post.featured_media} stickyMenu={stickyMenu}>
+    <Layout
+      menu={mainMenu}
+      title={post.title.rendered}
+      image={post.acf.header_img || post.featured_media}
+      stickyMenu={stickyMenu}
+    >
       <div className="content-wrapper">
         <div className="w-100 page-wrapper transparent">
           <Row justify="center" className="h-100">
@@ -217,8 +256,16 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
               <div className="page-wrapper-content h-100">
                 <Row justify="center pt-2">
                   <Col span={22}>
-                    <h2 className="title my-2 pl-2 upper-case">{post.title.rendered}</h2>
-                    {post.acf.header_img && <img className="w-100 p-1" src={post.acf.header_img} alt={post.title.rendered} />}
+                    <h2 className="title my-2 pl-2 upper-case">
+                      {post.title.rendered}
+                    </h2>
+                    {post.acf.header_img && (
+                      <img
+                        className="w-100 p-1"
+                        src={post.acf.header_img}
+                        alt={post.title.rendered}
+                      />
+                    )}
                   </Col>
                   {renderContent()}
                 </Row>
@@ -235,7 +282,12 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
               </Row>
             </Col>
             <Col xs={22} sm={12} md={7} lg={6} xl={4}>
-              {post.acf.lease_form && <FooterBtn btn={"Түрээсийн хүсэлт илгээх"} url={post.acf.lease_form} />}
+              {post.acf.lease_form && (
+                <FooterBtn
+                  btn={"Түрээсийн хүсэлт илгээх"}
+                  url={post.acf.lease_form}
+                />
+              )}
             </Col>
           </Row>
         </div>
@@ -249,14 +301,5 @@ const MedicalEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
     </Layout>
   );
 };
-
-// Static page generation - no server-side data fetching needed
-export async function getStaticProps() {
-  return {
-    props: {
-      // Add any static props if needed in the future
-    },
-  };
-}
 
 export default MedicalEquipmentLeasing;

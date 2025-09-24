@@ -9,8 +9,17 @@ import FooterBtn from "../components/FooterBtn";
 import SendEmail from "../components/SendEmail";
 import useTranslation from "next-translate/useTranslation";
 
-import { ShareAltOutlined, FacebookFilled, TwitterOutlined, LinkedinFilled } from "@ant-design/icons";
-import { FacebookShareButton, TwitterShareButton, LinkedinShareButton } from "react-share";
+import {
+  ShareAltOutlined,
+  FacebookFilled,
+  TwitterOutlined,
+  LinkedinFilled,
+} from "@ant-design/icons";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+} from "react-share";
 
 const { TabPane } = Tabs;
 
@@ -20,8 +29,7 @@ const staticPostData = {
   title: { rendered: "ШИНЭ АВТОМАШИНЫ ЛИЗИНГ" },
   content: {
     rendered: `
-      <p>Эрхэм Та албан ёсны борлуулагч байгууллагуудаас шинэ автомашин авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээ санал болгож байна.</p>
-     
+     <p>Эрхэм Та албан ёсны борлуулагч байгууллагуудаас шинэ автомашин авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээ санал болгож байна.</p>
     `,
   },
   featured_media: "/images/logo.png",
@@ -58,11 +66,21 @@ const staticPostData = {
         <li>Бизнесийн орлого тодорхойлох баримтууд.</li>
       </ul>
     `,
-    interest_rate: { first_value: "1.2", second_value: "1.9", gap: "0.1", degree: "-10" },
+    interest_rate: {
+      first_value: "1.2",
+      second_value: "1.9",
+      gap: "0.1",
+      degree: "-10",
+    },
     period: { value: "8", degree: "210" },
     fee: "0.5",
     header_img: "/images/back.jpg",
-    pre_payment: { first_value: "10", second_value: "20", gap: "10", degree: "2" },
+    pre_payment: {
+      first_value: "10",
+      second_value: "20",
+      gap: "10",
+      degree: "2",
+    },
     img: "/images/back.jpg",
     footer_btn: { btn_text: "", btn_id: "", file: false },
     labels: {
@@ -101,7 +119,13 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
 
   const renderContentChild = (value, className) => {
     let content = regex(value);
-    return <div key={className} className={"contentSection " + className} dangerouslySetInnerHTML={{ __html: content }} />;
+    return (
+      <div
+        key={className}
+        className={"contentSection " + className}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
   };
 
   const renderACF = () => {
@@ -124,7 +148,10 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
       )
         return null;
 
-      const label = acf.labels && acf.labels[key] ? acf.labels[key] : productLabels[key] || key;
+      const label =
+        acf.labels && acf.labels[key]
+          ? acf.labels[key]
+          : productLabels[key] || key;
 
       return (
         <div key={index} className="py-3">
@@ -143,7 +170,10 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
     return <ProductConditions post={post} />;
   };
 
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/new-car-leasing` : "https://xacleasing.mn/new-car-leasing";
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/new-car-leasing`
+      : "https://xacleasing.mn/new-car-leasing";
 
   const menu = (
     <Menu>
@@ -172,7 +202,11 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
     return (
       <>
         <Col xs={20} sm={20} lg={14}>
-          <div align="center" className="my-2" dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
+          <div
+            align="center"
+            className="my-2"
+            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+          />
         </Col>
         <Col span={20}>
           <ProductConditions post={post} />
@@ -187,17 +221,35 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
   const renderEmail = () => {
     return (
       <div className="d-flex justify-content-center">
-        <SendEmail subject={post.title.rendered} content={post.content.rendered} acf={post.acf} />
+        <SendEmail
+          subject={post.title.rendered}
+          content={post.content.rendered}
+          acf={post.acf}
+        />
       </div>
     );
   };
 
   const renderBackBtn = () => {
-    return <MyLink title="Буцах" url="/p/leasing-product" slug="leasing-product" type="c" className="btn btn-primary my-3" prefetch={false} />;
+    return (
+      <MyLink
+        title="Буцах"
+        url="/p/leasing-product"
+        slug="leasing-product"
+        type="c"
+        className="btn btn-primary my-3"
+        prefetch={false}
+      />
+    );
   };
 
   return (
-    <Layout menu={mainMenu} title={post.title.rendered} image={post.acf.header_img || post.featured_media} stickyMenu={stickyMenu}>
+    <Layout
+      menu={mainMenu}
+      title={post.title.rendered}
+      image={post.acf.header_img || post.featured_media}
+      stickyMenu={stickyMenu}
+    >
       <div className="content-wrapper">
         <div className="w-100 page-wrapper transparent">
           <Row justify="center" className="h-100">
@@ -205,8 +257,16 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
               <div className="page-wrapper-content h-100">
                 <Row justify="center pt-2">
                   <Col span={22}>
-                    <h2 className="title my-2 pl-2 upper-case">{post.title.rendered}</h2>
-                    {post.acf.header_img && <img className="w-100 p-1" src={post.acf.header_img} alt={post.title.rendered} />}
+                    <h2 className="title my-2 pl-2 upper-case">
+                      {post.title.rendered}
+                    </h2>
+                    {post.acf.header_img && (
+                      <img
+                        className="w-100 p-1"
+                        src={post.acf.header_img}
+                        alt={post.title.rendered}
+                      />
+                    )}
                   </Col>
                   {renderContent()}
                 </Row>
@@ -223,7 +283,12 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
               </Row>
             </Col>
             <Col xs={22} sm={12} md={7} lg={6} xl={4}>
-              {post.acf.lease_form && <FooterBtn btn={"Түрээсийн хүсэлт илгээх"} url={post.acf.lease_form} />}
+              {post.acf.lease_form && (
+                <FooterBtn
+                  btn={"Түрээсийн хүсэлт илгээх"}
+                  url={post.acf.lease_form}
+                />
+              )}
             </Col>
           </Row>
         </div>

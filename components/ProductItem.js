@@ -18,8 +18,8 @@ function ProductItem({ id, title, descr, slug, img, link }) {
 
   // Use the direct link if provided, otherwise fallback to old logic
   const productLink = link || generateLink(`/news/${id}`);
-  const isStaticImage = img && !img.includes("xacleasing.app.erxes.io");
-  const imageSrc = isStaticImage ? img : `https://xacleasing.app.erxes.io/gateway/read-file?key=${img}`;
+
+  const imageSrc = img;
 
   return (
     <div key={id || title} className="product-item">
@@ -28,7 +28,9 @@ function ProductItem({ id, title, descr, slug, img, link }) {
         <div className="product-descr">
           <h4>
             <Link href={productLink} passHref>
-              <a rel="noopener noreferrer nofollow">{regex(truncate(title, 10))}</a>
+              <a rel="noopener noreferrer nofollow">
+                {regex(truncate(title, 10))}
+              </a>
             </Link>
           </h4>
           <div dangerouslySetInnerHTML={{ __html: truncate(descr, 10) }} />

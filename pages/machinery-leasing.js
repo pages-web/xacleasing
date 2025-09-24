@@ -9,8 +9,17 @@ import FooterBtn from "../components/FooterBtn";
 import SendEmail from "../components/SendEmail";
 import useTranslation from "next-translate/useTranslation";
 
-import { ShareAltOutlined, FacebookFilled, TwitterOutlined, LinkedinFilled } from "@ant-design/icons";
-import { FacebookShareButton, TwitterShareButton, LinkedinShareButton } from "react-share";
+import {
+  ShareAltOutlined,
+  FacebookFilled,
+  TwitterOutlined,
+  LinkedinFilled,
+} from "@ant-design/icons";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+} from "react-share";
 
 const { TabPane } = Tabs;
 
@@ -20,8 +29,7 @@ const staticPostData = {
   title: { rendered: "МАШИН МЕХАНИЗМЫН ЛИЗИНГ" },
   content: {
     rendered: `
-      <p>Эрхэм Та албан ёсны борлуулагч байгууллагуудаас уул уурхай, зам барилга, ачаа тээврийн үйлчилгээнд ашиглагдах тоног төхөөрөмж, техник, тусгай зориулалтын машин механизм авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээг санал болгож байна.</p>
-     
+     <p>Эрхэм Та албан ёсны борлуулагч байгууллагуудаас уул уурхай, зам барилга, ачаа тээврийн үйлчилгээнд ашиглагдах тоног төхөөрөмж, техник, тусгай зориулалтын машин механизм авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээг санал болгож байна.</p>
     `,
   },
   featured_media: "/images/logo.png",
@@ -35,7 +43,6 @@ const staticPostData = {
         <li>Тухайн бизнесийн үйл ажиллагаагаа 12 сар эрхэлж буй.</li>
         <li>Идэвхитэй хугацаа хэтэрсэн болон муу зээлийн түүхгүй байх.</li>
         <li>Ашиг орлогоороо түрээсийн төлбөрийг бүрэн төлөх боломжтой байх.</li>
-        <li>Машин механизмыг ашиглах зориулалтыг тодорхой заасан байх.</li>
       </ul>
     `,
     individuals: `
@@ -46,7 +53,6 @@ const staticPostData = {
             <li>Дансны хуулга;</li>
             <li>Ажлын гэрээ;</li>
             <li>Өөрийн машин механизмын гэрчилгээ;</li>
-            <li>Бизнес эрхлэгчийн бүртгэлийн гэрчилгээ.</li>
           </ol>
         </li>
       </ul>
@@ -58,11 +64,15 @@ const staticPostData = {
         <li>Сүүлийн 2 жилийн санхүүгийн тайлан;</li>
         <li>Эрх бүхий этгээдийн зөвшөөрөл;</li>
         <li>Бизнесийн орлого тодорхойлох баримтууд;</li>
-        <li>Машин механизм ашиглах үйл ажиллагааны товч танилцуулга.</li>
       </ul>
     `,
-    interest_rate: { first_value: "1.6", second_value: "1.9", gap: "0.1", degree: "90" },
-    period: { value: "10", degree: "120" },
+    interest_rate: {
+      first_value: "1.6",
+      second_value: "1.9",
+      gap: "0.1",
+      degree: "90",
+    },
+    period: { value: "5", degree: "120" },
     fee: "0.5",
     header_img: "/images/back.jpg",
     pre_payment: { first_value: "20", gap: "5", degree: "60" },
@@ -104,7 +114,13 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
 
   const renderContentChild = (value, className) => {
     let content = regex(value);
-    return <div key={className} className={"contentSection " + className} dangerouslySetInnerHTML={{ __html: content }} />;
+    return (
+      <div
+        key={className}
+        className={"contentSection " + className}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
   };
 
   const renderACF = () => {
@@ -127,7 +143,10 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
       )
         return null;
 
-      const label = acf.labels && acf.labels[key] ? acf.labels[key] : productLabels[key] || key;
+      const label =
+        acf.labels && acf.labels[key]
+          ? acf.labels[key]
+          : productLabels[key] || key;
 
       return (
         <div key={index} className="py-3">
@@ -146,7 +165,10 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
     return <ProductConditions post={post} />;
   };
 
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/machinery-leasing` : "https://xacleasing.mn/machinery-leasing";
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/machinery-leasing`
+      : "https://xacleasing.mn/machinery-leasing";
 
   const menu = (
     <Menu>
@@ -175,7 +197,11 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
     return (
       <>
         <Col xs={20} sm={20} lg={14}>
-          <div align="center" className="my-2" dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
+          <div
+            align="center"
+            className="my-2"
+            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+          />
         </Col>
         <Col span={20}>
           <ProductConditions post={post} />
@@ -190,17 +216,35 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
   const renderEmail = () => {
     return (
       <div className="d-flex justify-content-center">
-        <SendEmail subject={post.title.rendered} content={post.content.rendered} acf={post.acf} />
+        <SendEmail
+          subject={post.title.rendered}
+          content={post.content.rendered}
+          acf={post.acf}
+        />
       </div>
     );
   };
 
   const renderBackBtn = () => {
-    return <MyLink title="Буцах" url="/p/leasing-product" slug="leasing-product" type="c" className="btn btn-primary my-3" prefetch={false} />;
+    return (
+      <MyLink
+        title="Буцах"
+        url="/p/leasing-product"
+        slug="leasing-product"
+        type="c"
+        className="btn btn-primary my-3"
+        prefetch={false}
+      />
+    );
   };
 
   return (
-    <Layout menu={mainMenu} title={post.title.rendered} image={post.acf.header_img || post.featured_media} stickyMenu={stickyMenu}>
+    <Layout
+      menu={mainMenu}
+      title={post.title.rendered}
+      image={post.acf.header_img || post.featured_media}
+      stickyMenu={stickyMenu}
+    >
       <div className="content-wrapper">
         <div className="w-100 page-wrapper transparent">
           <Row justify="center" className="h-100">
@@ -208,8 +252,16 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
               <div className="page-wrapper-content h-100">
                 <Row justify="center pt-2">
                   <Col span={22}>
-                    <h2 className="title my-2 pl-2 upper-case">{post.title.rendered}</h2>
-                    {post.acf.header_img && <img className="w-100 p-1" src={post.acf.header_img} alt={post.title.rendered} />}
+                    <h2 className="title my-2 pl-2 upper-case">
+                      {post.title.rendered}
+                    </h2>
+                    {post.acf.header_img && (
+                      <img
+                        className="w-100 p-1"
+                        src={post.acf.header_img}
+                        alt={post.title.rendered}
+                      />
+                    )}
                   </Col>
                   {renderContent()}
                 </Row>
@@ -226,7 +278,12 @@ const MachineryLeasing = ({ mainMenu, stickyMenu }) => {
               </Row>
             </Col>
             <Col xs={22} sm={12} md={7} lg={6} xl={4}>
-              {post.acf.lease_form && <FooterBtn btn={"Түрээсийн хүсэлт илгээх"} url={post.acf.lease_form} />}
+              {post.acf.lease_form && (
+                <FooterBtn
+                  btn={"Түрээсийн хүсэлт илгээх"}
+                  url={post.acf.lease_form}
+                />
+              )}
             </Col>
           </Row>
         </div>

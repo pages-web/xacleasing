@@ -15,7 +15,8 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
   const isDownloadLogoLink = title === "Лого татах" || slug === "download-logo";
 
   // Check if this is a download-application-form link
-  const isDownloadApplicationFormLink = title === "Өргөдөл, маягт татах" || slug === "download-application-form";
+  const isDownloadApplicationFormLink =
+    title === "Өргөдөл, маягт татах" || slug === "download-application-form";
 
   // Check if this is an about-group link
   const isAboutGroupLink = title === "Группын тухай" || slug === "about-group";
@@ -35,11 +36,18 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
     title?.includes("хамтран ажиллах") ||
     title?.includes("Хамтран ажиллах") ||
     title?.includes("ХАМТРАН АЖИЛЛАХ") ||
-    (title?.toLowerCase().includes("нийлүүлэгч") && title?.toLowerCase().includes("хэрхэн")) ||
-    (title?.toLowerCase().includes("vendor") && title?.toLowerCase().includes("become"));
+    (title?.toLowerCase().includes("нийлүүлэгч") &&
+      title?.toLowerCase().includes("хэрхэн")) ||
+    (title?.toLowerCase().includes("vendor") &&
+      title?.toLowerCase().includes("become"));
 
   // Debug logging for vendor-related links
-  if (title && (title.toLowerCase().includes("нийлүүлэгч") || title.toLowerCase().includes("хамтарч") || slug?.includes("хаслизингтэй"))) {
+  if (
+    title &&
+    (title.toLowerCase().includes("нийлүүлэгч") ||
+      title.toLowerCase().includes("хамтарч") ||
+      slug?.includes("хаслизингтэй"))
+  ) {
   }
 
   // Check if this is a new-car-vendors link (exclude how-to-become cases)
@@ -53,9 +61,15 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
       slug?.includes("supplier"));
 
   // Check for leasing product pages
-  const isNewCarLeasingLink = title === "Шинэ автомашины лизинг" || slug === "new-car-leasing" || title === "ШИНЭ АВТОМАШИНЫ ЛИЗИНГ";
+  const isNewCarLeasingLink =
+    title === "Шинэ автомашины лизинг" ||
+    slug === "new-car-leasing" ||
+    title === "ШИНЭ АВТОМАШИНЫ ЛИЗИНГ";
 
-  const isMachineryLeasingLink = title === "Машин механизмын лизинг" || slug === "machinery-leasing" || title === "МАШИН МЕХАНИЗМЫН ЛИЗИНГ";
+  const isMachineryLeasingLink =
+    title === "Машин механизмын лизинг" ||
+    slug === "machinery-leasing" ||
+    title === "МАШИН МЕХАНИЗМЫН ЛИЗИНГ";
 
   const isManufacturingEquipmentLeasingLink =
     title === "Үйлдвэрлэлийн тоног төхөөрөмжийн лизинг" ||
@@ -63,13 +77,15 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
     title === "ҮЙЛДВЭРЛЭЛИЙН ТОНОГ ТӨХӨӨРӨМЖИЙН ЛИЗИНГ";
 
   const isMedicalEquipmentLeasingLink =
-    title === "Эмнэлэгийн тоног төхөөрөмжийн лизинг" || slug === "medical-equipment-leasing" || title === "ЭМНЭЛЭГИЙН ТОНОГ ТӨХӨӨРӨМЖИЙН ЛИЗИНГ";
+    title === "Эмнэлэгийн тоног төхөөрөмжийн лизинг" ||
+    slug === "medical-equipment-leasing" ||
+    title === "ЭМНЭЛЭГИЙН ТОНОГ ТӨХӨӨРӨМЖИЙН ЛИЗИНГ";
 
   // Check if this is a news category link
-  const isNewsLink = 
-    slug === "news" || 
-    title === "Мэдээ" || 
-    title === "МЭДЭЭ" || 
+  const isNewsLink =
+    slug === "news" ||
+    title === "Мэдээ" ||
+    title === "МЭДЭЭ" ||
     title === "News" ||
     title?.toLowerCase().includes("мэдээ");
 
@@ -99,16 +115,16 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
                             : isMedicalEquipmentLeasingLink
                               ? generateLink(`/medical-equipment-leasing`)
                               : isNewsLink
-                                ? generateLink(`/news/[slug]`)
+                                ? generateLink(`/news`)
                                 : type === "about"
-                                ? generateLink(`/about`)
-                                : type === "career"
-                                  ? generateLink(`/career/hr`)
-                                  : type === "career-detail"
-                                    ? generateLink(`/career/` + slug)
-                                    : type != "custom"
-                                      ? generateLink(`/${type}/[slug]`)
-                                      : url
+                                  ? generateLink(`/about`)
+                                  : type === "career"
+                                    ? generateLink(`/career/hr`)
+                                    : type === "career-detail"
+                                      ? generateLink(`/career/` + slug)
+                                      : type != "custom"
+                                        ? generateLink(`/${type}/[slug]`)
+                                        : url
       }
       as={
         isHowToBecomeVendorLink
@@ -134,20 +150,24 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
                             : isMedicalEquipmentLeasingLink
                               ? generateLink(`/medical-equipment-leasing`)
                               : isNewsLink
-                                ? generateLink(`/news/` + slug)
+                                ? generateLink(`/news/`)
                                 : type === "about"
-                                ? generateLink(`/about`)
-                                : type === "career"
-                                  ? generateLink(`/career/hr`)
-                                  : type === "career-detail"
-                                    ? generateLink(`/career/` + slug)
-                                    : type != "custom"
-                                      ? generateLink(`/${type}/` + slug)
-                                      : url
+                                  ? generateLink(`/about`)
+                                  : type === "career"
+                                    ? generateLink(`/career/hr`)
+                                    : type === "career-detail"
+                                      ? generateLink(`/career/` + slug)
+                                      : type != "custom"
+                                        ? generateLink(`/${type}/` + slug)
+                                        : url
       }
       passHref
     >
-      <a rel="noopener noreferrer nofollow" target={type === "custom" ? "_blank" : "_self"} className={className || ""}>
+      <a
+        rel="noopener noreferrer nofollow"
+        target={type === "custom" ? "_blank" : "_self"}
+        className={className || ""}
+      >
         {className === "back-btn" && <RollbackOutlined />}
         {title}
         {icon && className != "back-btn" && <RightOutlined />}
