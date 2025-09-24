@@ -1,8 +1,60 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Row } from "antd";
 import Slider from "react-slick";
+import { useGraphQL } from "../../providers/ApolloProvider";
+import Link from "next/link";
+
+const GET_SERVICES_POSTS = `
+query PostList(
+    $clientPortalId: String!
+    $type: String
+    $featured: Boolean
+    $categoryIds: [String]
+    $searchValue: String
+    $status: PostStatus
+    $page: Int
+    $perPage: Int
+    $tagIds: [String]
+    $sortField: String
+    $sortDirection: String
+  ) {
+    cmsPostList(
+      clientPortalId: $clientPortalId
+      featured: $featured
+      type: $type
+      categoryIds: $categoryIds
+      searchValue: $searchValue
+      status: $status
+      page: $page
+      perPage: $perPage
+      tagIds: $tagIds
+      sortField: $sortField
+      sortDirection: $sortDirection
+    ) {
+      currentPage
+      totalCount
+      totalPages
+      posts {
+        _id
+        title
+        createdAt
+        updatedAt
+        status
+        excerpt
+        thumbnail {
+          url
+        }
+        content
+      }
+    }
+  }
+`;
 
 function HomeSlider() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
+  const { query } = useGraphQL();
   const settings = {
     infinite: true,
     speed: 600,
@@ -14,34 +66,42 @@ function HomeSlider() {
     dots: false,
   };
 
-  const slides = [
-    {
-      title: `"CAT - LEASING" ХӨТӨЛБӨР`,
-      text: "Барловорлд Монголиа ХХК нь Катерпиллар корпорацийн Монгол дахь албан ёсны дилер байгууллага юм. 1996 онд байгуулагдсан цагаасаа хойш Монголын уул уурхай, эрчим хүч, барилга, зам барилга, дэд бүтэц болон хөдөө аж ах...",
-    },
-    {
-      title: `ДУГААРТАЙ АВТОМАШИНЫ ЗЭЭЛИЙН ҮЙЛЧИЛГЭЭР`,
-      text: "2016 оноос хойш үйлдвэрлэгдсэн дугаартай автомашиныг 1ӨДӨРТ багтаан зээлээр аваарай.",
-    },
-    {
-      title: `ГААЛЬТАЙ АВТОМАШИНЫ ЗЭЭЛИЙН ҮЙЛЧИЛГЭЭ`,
-      text: "Да хүрээ, 22 авто худалдааны төвүүдэд гаальтай автомашины зээлийн үйлчилгээг 2 ЦАГ дотор шийдвэрлэж байна.",
-    },
-    {
-      title: "ЗАХИАЛСАН LAND CRUISER 300 АВТОМАШИНАА ЗАЙНААС ШИЙДҮҮЛЭЭРЭЙ",
-      text: "Хүсэн хүлээсэн Land Cruiser 300 автомашин 2021 оны 6 сарын 10-ны шөнө дэлхийн дахинд нээлтээ хийж үнэнч хэрэглэгч, шүтэн бишрэгч нартаа бэлэг барьсан билээ. 2007 онд анхны Land Cruiser 200...",
-    },
-    {
-      title: "НИЙЛҮҮЛЭГЧ ХЭРХЭН БОЛОХ ВЭ?",
-      text: "ХасЛизингээр дамжуулан машин механизм, тоног төхөөрөмжөө борлуулах байгууллага нь дараах шалгуурыг хангах ёстой. Үүнд: Сүүлийн 1 жилээс доошгүй хугацаанд үйл ажиллагаа явуулсан байх; Монгол улсын хуулийн дагуу үүсгэн...",
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await query(GET_SERVICES_POSTS, {
+          clientPortalId: "cp-wzk8M6gshwVUeGnfdR",
+          page: 1,
+          tagIds: ["seTvhIbPgPe8oADOM2C_m"],
+          perPage: 20,
+        });
+
+        if (result && result.cmsPostList) {
+          setData(result.cmsPostList);
+          console.log("Fetched data from GraphQL:", result.cmsPostList);
+        } else {
+          throw new Error("No data received from GraphQL query");
+        }
+      } catch (err) {
+        console.error("GraphQL Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (query) {
+      fetchData();
+    }
+  }, [query]);
 
   return (
     <Row justify="center" className="w-100 relative">
       <Col xs={22} sm={22} md={20} lg={18} xl={16}>
         <Slider {...settings}>
-          {slides.map((slide, index) => (
+          {data?.posts.map((slide, index) => (
             <div key={index}>
               <div
                 style={{
@@ -54,20 +114,25 @@ function HomeSlider() {
                   minHeight: "320px",
                 }}
               >
-                {/* Top Button */}
-                <button
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "white",
-                    padding: "6px 14px",
-                    border: "1px solid white",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  Хүсэлт илгээх
-                </button>
+                {slide?.content ? (
+                  <Link href={`/services/${slide.slug}`}>
+                    <button
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "white",
+                        padding: "6px 14px",
+                        border: "1px solid white",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        alignSelf: "flex-start",
+                      }}
+                    >
+                      Хүсэлт илгээх
+                    </button>
+                  </Link>
+                ) : (
+                  <></>
+                )}
 
                 {/* Title */}
                 <h1
@@ -81,22 +146,42 @@ function HomeSlider() {
                 </h1>
 
                 {/* Description - hidden on small screens */}
-                <p className="slider-desc">{slide.text}</p>
+                <p className="slider-desc">{slide.excerpt}</p>
 
                 {/* Bottom Button */}
-                <button
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.15)",
-                    color: "white",
-                    padding: "10px 20px",
-                    border: "none",
-                    borderRadius: "8px",
-                    width: "fit-content",
-                    marginTop: "auto",
-                  }}
-                >
-                  Дэлгэрэнгүй
-                </button>
+                {slide?.content ? (
+                  <Link href={`/services/${slide._id}`}>
+                    <button
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "8px",
+                        width: "fit-content",
+                        marginTop: "auto",
+                      }}
+                    >
+                      Дэлгэрэнгүй
+                    </button>
+                  </Link>
+                ) : (
+                  <Link href={`/how-to-become-vendor`}>
+                    <button
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "8px",
+                        width: "fit-content",
+                        marginTop: "auto",
+                      }}
+                    >
+                      Дэлгэрэнгүй
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           ))}

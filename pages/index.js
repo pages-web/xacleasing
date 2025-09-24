@@ -7,15 +7,25 @@ import ReactPageScroller from "../components/react-page-scroller";
 import ProductList from "../components/home/product-list";
 import VendorList from "../components/home/vendor-list";
 import Contact from "../components/home/contact";
-import Sliders from "../components/home/sliders";
 import Calculator from "../components/calculator/calculator";
 import config from "../config";
 import { __ } from "../utils";
 import Head from "next/head";
-import { staticSliderData, staticSliderCategory } from "../data/staticSliderData";
+import {
+  staticSliderData,
+  staticSliderCategory,
+} from "../data/staticSliderData";
 import HomeSlider from "../components/home/home-slider";
 
-const Index = ({ vendorPosts, branches, products, vendorCategories, sliderCat, sliders, loading, mainMenu, stickyMenu }) => {
+const Index = ({
+  vendorPosts,
+  branches,
+  products,
+  vendorCategories,
+  loading,
+  mainMenu,
+  stickyMenu,
+}) => {
   const [currentPage, setCurrentPage] = useState(null);
   const paginationClicked = (event) => {
     setCurrentPage(Number(event.target.name));
@@ -33,7 +43,14 @@ const Index = ({ vendorPosts, branches, products, vendorCategories, sliderCat, s
     const pageNumbers = [];
 
     for (let i = 1; i <= 5; i++) {
-      pageNumbers.push(<Pagination.Item key={i} name={i - 1} active={i - 1 === currentPage} onClick={(e) => paginationClicked(e)}></Pagination.Item>);
+      pageNumbers.push(
+        <Pagination.Item
+          key={i}
+          name={i - 1}
+          active={i - 1 === currentPage}
+          onClick={(e) => paginationClicked(e)}
+        ></Pagination.Item>
+      );
     }
     return [...pageNumbers];
   };
@@ -42,7 +59,12 @@ const Index = ({ vendorPosts, branches, products, vendorCategories, sliderCat, s
       <Head>
         <link rel="preload" href="/images/back.jpg" as="image" />
       </Head>
-      <Layout loading={loading} title={__("ХасЛизинг")} menu={mainMenu} stickyMenu={stickyMenu}>
+      <Layout
+        loading={loading}
+        title={__("ХасЛизинг")}
+        menu={mainMenu}
+        stickyMenu={stickyMenu}
+      >
         <ReactPageScroller
           pageOnChange={handlePageChange}
           onBeforePageScroll={handleBeforePageChange}
@@ -51,19 +73,31 @@ const Index = ({ vendorPosts, branches, products, vendorCategories, sliderCat, s
         >
           <div className="component center" key="home-slider">
             <HomeSlider products={products} />
-            <div className="icon-scroll" onClick={() => handlePageChange(1)}></div>
+            <div
+              className="icon-scroll"
+              onClick={() => handlePageChange(1)}
+            ></div>
           </div>
           <div className="component center" key="home-products">
             <ProductList products={products} />
-            <div className="icon-scroll" onClick={() => handlePageChange(2)}></div>
+            <div
+              className="icon-scroll"
+              onClick={() => handlePageChange(2)}
+            ></div>
           </div>
           <div className="component center" key="home-vendors">
             <Row justify="center" className="w-100" gutter={[48, 0]}>
               <Col xs={22} sm={22} md={20} lg={18} xl={16}>
-                <VendorList vendorCategories={vendorCategories} vendorPosts={vendorPosts} />
+                <VendorList
+                  vendorCategories={vendorCategories}
+                  vendorPosts={vendorPosts}
+                />
               </Col>
             </Row>
-            <div className="icon-scroll" onClick={() => handlePageChange(3)}></div>
+            <div
+              className="icon-scroll"
+              onClick={() => handlePageChange(3)}
+            ></div>
           </div>
           <div className="component center" key="home-calculator">
             <Row justify="center" className="w-100 relative" gutter={[48, 0]}>
@@ -71,7 +105,10 @@ const Index = ({ vendorPosts, branches, products, vendorCategories, sliderCat, s
                 <Calculator isIndex={true} />
               </Col>
             </Row>
-            <div className="icon-scroll" onClick={() => handlePageChange(4)}></div>
+            <div
+              className="icon-scroll"
+              onClick={() => handlePageChange(4)}
+            ></div>
           </div>
           <div className="component center" key="home-contact">
             <Row justify="center" className="w-100 contact" gutter={[48, 0]}>
@@ -134,12 +171,17 @@ export async function getStaticProps(context) {
     // Continue with execution even if vendor is null to try fetching other data
     console.log("Vendor category found:", vendor ? vendor.name : "None");
 
-    const [vendorPosts, vendorCategories, branches, products] = await Promise.allSettled([
-      vendor ? wp.posts().categories(vendor.id).perPage(40).embed() : Promise.resolve([]),
-      vendor ? wp.categories().parent(vendor.id).embed() : Promise.resolve([]),
-      wp.posts().categories(10).embed(),
-      wp.posts().categories(3).embed(),
-    ]);
+    const [vendorPosts, vendorCategories, branches, products] =
+      await Promise.allSettled([
+        vendor
+          ? wp.posts().categories(vendor.id).perPage(40).embed()
+          : Promise.resolve([]),
+        vendor
+          ? wp.categories().parent(vendor.id).embed()
+          : Promise.resolve([]),
+        wp.posts().categories(10).embed(),
+        wp.posts().categories(3).embed(),
+      ]);
 
     console.log("API fetch results:", {
       vendorPosts: vendorPosts.status,
@@ -150,10 +192,12 @@ export async function getStaticProps(context) {
 
     return {
       props: {
-        vendorPosts: vendorPosts.status === "fulfilled" ? vendorPosts.value : [],
+        vendorPosts:
+          vendorPosts.status === "fulfilled" ? vendorPosts.value : [],
         branches: branches.status === "fulfilled" ? branches.value : [],
         products: products.status === "fulfilled" ? products.value : [],
-        vendorCategories: vendorCategories.status === "fulfilled" ? vendorCategories.value : [],
+        vendorCategories:
+          vendorCategories.status === "fulfilled" ? vendorCategories.value : [],
         sliderCat: staticSliderCategory, // Use static data instead of WordPress
         sliders: staticSliderData, // Use static data instead of WordPress
       },
