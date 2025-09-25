@@ -98,7 +98,7 @@ function HomeSlider() {
   }, [query]);
 
   return (
-    <Row justify="center" className="w-100 relative">
+    <Row justify="center" className="w-100  relative">
       <Col xs={22} sm={22} md={20} lg={18} xl={16}>
         <Slider {...settings}>
           {data?.posts.map((slide, index) => (
@@ -112,6 +112,7 @@ function HomeSlider() {
                   padding: "40px 30px",
                   color: "white",
                   minHeight: "320px",
+                  width: "50%",
                 }}
               >
                 {slide?.content ? (
@@ -194,7 +195,7 @@ function HomeSlider() {
           font-size: 15px;
           line-height: 1.6;
           color: rgba(255, 255, 255, 0.9);
-          max-width: 35%;
+          max-width: 100%;
         }
 
         @media (max-width: 768px) {
