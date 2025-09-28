@@ -24,7 +24,12 @@ function ProductItem({ id, title, descr, slug, img, link }) {
   return (
     <div key={id || title} className="product-item">
       <div className="product-content">
-        <img className="w-100 h-100" src={imageSrc} alt={title} />
+        <img
+          className="w-100 h-100"
+          style={{ objectFit: "cover" }}
+          src={imageSrc}
+          alt={title}
+        />
         <div className="product-descr">
           <h4>
             <Link href={productLink} passHref>

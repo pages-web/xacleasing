@@ -8,38 +8,49 @@ import useTranslation from "next-translate/useTranslation";
 // Static products data with proper links to leasing pages
 const staticProducts = [
   {
-    id: "machinery-leasing",
-    title: { rendered: "МАШИН МЕХАНИЗМЫН ЛИЗИНГ" },
-    slug: "machinery-leasing",
-    excerpt: {
-      rendered: "Уул уурхай, зам барилга, ачаа тээврийн үйлчилгээнд ашиглагдах тоног төхөөрөмж, техник, тусгай зориулалтын машин механизмын лизинг",
-    },
-    link: "/machinery-leasing",
-    img: "/images/back.jpg",
-  },
-  {
     id: "manufacturing-equipment-leasing",
-    title: { rendered: "ҮЙЛДВЭРЛЭЛИЙН ТОНОГ ТӨХӨӨРӨМЖИЙН ЛИЗИНГ" },
+    title: { rendered: "ҮЙЛДВЭРЛЭЛИЙН ТОНОГ ТӨХӨӨРӨМЖИЙН ЛИЗИНГИЙН ҮЙЛЧИЛГЭЭ" },
     slug: "manufacturing-equipment-leasing",
-    excerpt: { rendered: "Үйлдвэрлэл, үйлчилгээний тоног төхөөрөмжийн хамгийн таатай нөхцөлтэй лизингийн үйлчилгээ" },
+    excerpt: {
+      rendered:
+        "Эрхэм та үйлдвэрлэл, үйлчилгээний тоног төхөөрөмж авахаар төлөвлөж байгаа бол бид танд хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээг санал болгож байна.",
+    },
     link: "/manufacturing-equipment-leasing",
-    img: "/images/back.jpg",
+    img: "/products/uild.jpg",
   },
+  ,
   {
     id: "medical-equipment-leasing",
     title: { rendered: "ЭМНЭЛЭГИЙН ТОНОГ ТӨХӨӨРӨМЖИЙН ЛИЗИНГ" },
     slug: "medical-equipment-leasing",
-    excerpt: { rendered: "Эмчилгээ, оношилгооны тоног төхөөрөмжийн хамгийн таатай нөхцөлтэй лизингийн үйлчилгээ" },
+    excerpt: {
+      rendered:
+        "Эрхэм та албан ёсны борлуулагч байгууллагуудаас эмчилгээ, оношилгооны тоног төхөөрөмж авахаар төлөвлөж байгаа бол бид танд хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээг санал болгож байна.",
+    },
     link: "/medical-equipment-leasing",
-    img: "/images/back.jpg",
+    img: "/products/emnlg.jpg",
+  },
+  {
+    id: "machinery-leasing",
+    title: { rendered: "МАШИН МЕХАНИЗМЫН ЛИЗИНГ" },
+    slug: "machinery-leasing",
+    excerpt: {
+      rendered:
+        "Эрхэм Та албан ёсны борлуулагч байгууллагуудаас уул уурхай, зам барилга, ачаа тээврийн үйлчилгээнд ашиглагдах тоног төхөөрөмж, техник, тусгай зориулалтын машин механизм авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээг санал болгож байна.",
+    },
+    link: "/machinery-leasing",
+    img: "products/mech.jpg",
   },
   {
     id: "new-car-leasing",
     title: { rendered: "ШИНЭ АВТОМАШИНЫ ЛИЗИНГ" },
     slug: "new-car-leasing",
-    excerpt: { rendered: "Албан ёсны борлуулагч байгууллагуудаас шинэ автомашины хамгийн таатай нөхцөлтэй лизингийн үйлчилгээ" },
+    excerpt: {
+      rendered:
+        "Эрхэм Та албан ёсны борлуулагч байгууллагуудаас шинэ автомашин авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээ санал болгож байна.",
+    },
     link: "/new-car-leasing",
-    img: "/images/back.jpg",
+    img: "/products/car.jpg",
   },
 ];
 

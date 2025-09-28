@@ -3,10 +3,19 @@ import { Col, Image, Row } from "antd";
 import { getData, regex } from "../../utils";
 import GoogleMap from "../map/GoogleMap";
 import Feedback from "./feedback";
-import { FieldTimeOutlined, PushpinOutlined, PhoneOutlined } from "@ant-design/icons";
+import {
+  FieldTimeOutlined,
+  PushpinOutlined,
+  PhoneOutlined,
+} from "@ant-design/icons";
 import useTranslation from "next-translate/useTranslation";
 
-const Contact = ({ branchList, graphqlBranches = null, graphqlLoading = false, graphqlError = null }) => {
+const Contact = ({
+  branchList,
+  graphqlBranches = null,
+  graphqlLoading = false,
+  graphqlError = null,
+}) => {
   const { t } = useTranslation("common");
 
   console.log("GraphQL branches:", graphqlBranches);
@@ -18,33 +27,73 @@ const Contact = ({ branchList, graphqlBranches = null, graphqlLoading = false, g
     const customData = branch.customFieldsData || {};
     const acfData = branch.acf || {};
 
-    const customFields = Array.isArray(branch.customFieldsData) ? branch.customFieldsData : [];
-    const address = customFields[0]?.value || branch.content?.rendered || branch.content || "";
+    const customFields = Array.isArray(branch.customFieldsData)
+      ? branch.customFieldsData
+      : [];
+    const address =
+      customFields[0]?.value ||
+      branch.content?.rendered ||
+      branch.content ||
+      "";
     const time = customFields[1]?.value || "";
     const phone = customFields[2]?.value || "";
 
     return (
-      <Col xs={24} sm={24} md={24} lg={24} xl={12} key={branch._id || branch.id || branchTitle}>
-        <div className="branch-item">
-          <ul className="branch-detail">
-            <h3>{regex(branchTitle)}</h3>
-            <li>
-              <PushpinOutlined />
-              <div dangerouslySetInnerHTML={{ __html: address }} />
-            </li>
-            {time && (
+      <Col
+        xs={24}
+        sm={24}
+        md={24}
+        lg={24}
+        xl={12}
+        key={branch._id || branch.id || branchTitle}
+      >
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <div
+            style={{
+              width: "200px",
+              height: "200px",
+              overflow: "hidden",
+              flexShrink: 0,
+            }}
+          >
+            <Image
+              src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${branch.thumbnail?.url || ""}`}
+              alt={branchTitle}
+              width={200}
+              height={200}
+              style={{
+                width: "100%", // бүгд адил өргөнтэй
+                height: "100%", // container-т тааруулна
+                objectFit: "cover", // зураг бүрэн дүүргэх
+              }}
+            />
+          </div>
+
+          <div className="branch-item">
+            <ul className="branch-detail">
+              <h3>{regex(branchTitle)}</h3>
               <li>
-                <FieldTimeOutlined />
-                <div dangerouslySetInnerHTML={{ __html: time }} />
+                <PushpinOutlined />
+                <div dangerouslySetInnerHTML={{ __html: address }} />
               </li>
-            )}
-            {phone && (
-              <li>
-                <PhoneOutlined />
-                <div dangerouslySetInnerHTML={{ __html: phone.replace(/\s+/g, "<br/>") }} />
-              </li>
-            )}
-          </ul>
+              {time && (
+                <li>
+                  <FieldTimeOutlined />
+                  <div dangerouslySetInnerHTML={{ __html: time }} />
+                </li>
+              )}
+              {phone && (
+                <li>
+                  <PhoneOutlined />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: phone.replace(/\s+/g, "<br/>"),
+                    }}
+                  />
+                </li>
+              )}
+            </ul>
+          </div>
         </div>
       </Col>
     );
@@ -91,7 +140,11 @@ const Contact = ({ branchList, graphqlBranches = null, graphqlLoading = false, g
             </li>
             <li>
               <span>{t("ХАЯГ") + ":"}</span>
-              <p>{t("ХасЛизинг цамхаг, 5-р давхар, 1-р хороо, Бага тойруу, Чингэлтэй дүүрэг, Улаанбаатар-15170, Монгол улс")}</p>
+              <p>
+                {t(
+                  "ХасЛизинг цамхаг, 5-р давхар, 1-р хороо, Бага тойруу, Чингэлтэй дүүрэг, Улаанбаатар-15170, Монгол улс"
+                )}
+              </p>
             </li>
             <li>
               <span>{t("ЦАХИМ ШУУДАН") + ":"}</span>

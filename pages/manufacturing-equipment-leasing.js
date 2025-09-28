@@ -77,9 +77,9 @@ const staticPostData = {
     },
     period: { value: "4", degree: "90" },
     fee: "0.5",
-    header_img: "/images/back.jpg",
+    header_img: "/product-detail/uildver.jpg",
     pre_payment: { first_value: "20", gap: "10", degree: "90" },
-    img: "/images/back.jpg",
+    img: "/product-detail/uildver.jpg",
     lease_form: "lease-app-manufacturing-equipment",
     footer_btn: { btn_text: "", btn_id: "", file: false },
     labels: {

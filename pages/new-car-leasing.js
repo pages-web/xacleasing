@@ -74,14 +74,14 @@ const staticPostData = {
     },
     period: { value: "8", degree: "210" },
     fee: "0.5",
-    header_img: "/images/back.jpg",
+    header_img: "/product-detail/sinemash.jpg",
     pre_payment: {
       first_value: "10",
       second_value: "20",
       gap: "10",
       degree: "2",
     },
-    img: "/images/back.jpg",
+    img: "/product-detail/sinemash.jpg",
     footer_btn: { btn_text: "", btn_id: "", file: false },
     labels: {
       requirements: "Тавигдах шалгуур",

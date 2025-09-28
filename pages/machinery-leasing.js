@@ -74,9 +74,9 @@ const staticPostData = {
     },
     period: { value: "5", degree: "120" },
     fee: "0.5",
-    header_img: "/images/back.jpg",
+    header_img: "product-detail/mech.jpg",
     pre_payment: { first_value: "20", gap: "5", degree: "60" },
-    img: "/images/back.jpg",
+    img: "/product-detail/mech.jpg",
     footer_btn: { btn_text: "", btn_id: "", file: false },
     labels: {
       requirements: "Тавигдах шалгуур",

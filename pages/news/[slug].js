@@ -9,8 +9,17 @@ import MyLink from "../../components/MyLink";
 import useTranslation from "next-translate/useTranslation";
 import { useGraphQL } from "../../providers/ApolloProvider";
 
-import { ShareAltOutlined, FacebookFilled, TwitterOutlined, LinkedinFilled } from "@ant-design/icons";
-import { FacebookShareButton, TwitterShareButton, LinkedinShareButton } from "react-share";
+import {
+  ShareAltOutlined,
+  FacebookFilled,
+  TwitterOutlined,
+  LinkedinFilled,
+} from "@ant-design/icons";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+} from "react-share";
 
 const GET_NEWS_DETAIL = `
 query Post($id: String) {
@@ -201,17 +210,29 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
     const menu = (
       <Menu>
         <Menu.Item>
-          <FacebookShareButton url={shareUrl} quote={regex(shareTitle)} hashtag="#xacleasing">
+          <FacebookShareButton
+            url={shareUrl}
+            quote={regex(shareTitle)}
+            hashtag="#xacleasing"
+          >
             <FacebookFilled className="mr-2" /> Facebook
           </FacebookShareButton>
         </Menu.Item>
         <Menu.Item>
-          <TwitterShareButton url={shareUrl} hashtag={["#xacleasing"]} title={regex(shareTitle)}>
+          <TwitterShareButton
+            url={shareUrl}
+            hashtag={["#xacleasing"]}
+            title={regex(shareTitle)}
+          >
             <TwitterOutlined className="mr-2" /> Twitter
           </TwitterShareButton>
         </Menu.Item>
         <Menu.Item>
-          <LinkedinShareButton url={shareUrl} title={regex(shareTitle)} source="https://xacleasing.mn/">
+          <LinkedinShareButton
+            url={shareUrl}
+            title={regex(shareTitle)}
+            source="https://xacleasing.mn/"
+          >
             <LinkedinFilled className="mr-2" /> Linkedin
           </LinkedinShareButton>
         </Menu.Item>
@@ -221,7 +242,10 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
     return (
       <div className="d-flex justify-content-center">
         <Dropdown overlay={menu} placement="topCenter" trigger={["click"]}>
-          <div className="ant-btn mt-2 ml-1 d-flex" onClick={(e) => e.preventDefault()}>
+          <div
+            className="ant-btn mt-2 ml-1 d-flex"
+            onClick={(e) => e.preventDefault()}
+          >
             <ShareAltOutlined />
             <span className="ml-1">{t("Түгээх")}</span>
           </div>
@@ -231,11 +255,20 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
   };
 
   const renderBackBtn = () => {
-    return <MyLink title={t("Буцах")} slug="news" type="c" className="back-btn" icon />;
+    return (
+      <MyLink
+        title={t("Буцах")}
+        slug="news"
+        type="c"
+        className="back-btn"
+        icon
+      />
+    );
   };
 
   const postTitle = currentPost.title?.rendered || currentPost.title || "";
-  const postContent = currentPost.content?.rendered || currentPost.content || "";
+  const postContent =
+    currentPost.content?.rendered || currentPost.content || "";
   const postImage =
     currentPost.thumbnail?.url ||
     (currentPost.images && currentPost.images[0]?.url) ||
@@ -243,8 +276,15 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
     getData(currentPost._embedded, "image") ||
     "";
 
+  console.log(postContent);
   return (
-    <Layout menu={mainMenu} loading={loading || graphqlLoading} title={regex(postTitle)} image={postImage} stickyMenu={stickyMenu}>
+    <Layout
+      menu={mainMenu}
+      loading={loading || graphqlLoading}
+      title={regex(postTitle)}
+      image={postImage}
+      stickyMenu={stickyMenu}
+    >
       <div className="content-wrapper">
         <div className="w-100 page-wrapper transparent">
           <Row justify="center" className="h-100">
@@ -252,13 +292,22 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
               <div className="page-wrapper-content h-100">
                 <Row justify="center pt-2">
                   <Col span={22}>
-                    <h2 className="title my-2 pl-2 upper-case">{regex(postTitle)}</h2>
+                    <h2 className="title my-2 pl-2 upper-case">
+                      {regex(postTitle)}
+                    </h2>
                     {postImage && (
-                      <img className="w-100 p-1" src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${postImage}`} alt={postTitle} />
+                      <img
+                        className="w-100 p-1"
+                        src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${postImage}`}
+                        alt={postTitle}
+                      />
                     )}
                   </Col>
                   <Col xs={20} lg={22} className="post-detail p-1">
-                    <div className="my-2" dangerouslySetInnerHTML={{ __html: postContent }} />
+                    <div
+                      className="my-2"
+                      dangerouslySetInnerHTML={{ __html: postContent }}
+                    />
 
                     {graphqlError && (
                       <div className="error-message">
@@ -294,25 +343,6 @@ export async function getStaticProps(context) {
   const slug = context.params?.slug;
 
   try {
-    // Эхлээд slug-аар хайх (WordPress)
-    let post = await wp
-      .posts()
-      .slug(slug)
-      .embed()
-      .then((data) => data[0])
-      .catch(() => null);
-
-    // Олдохгүй бол ID-аар хайх (WordPress-ын ID байж болно)
-    if (!post && slug && !isNaN(slug)) {
-      post = await wp
-        .posts()
-        .id(slug)
-        .embed()
-        .then((data) => data)
-        .catch(() => null);
-    }
-
-    // GraphQL ID format байж болно - dummy post үүсгэх
     if (!post) {
       post = {
         id: slug,
@@ -334,16 +364,6 @@ export async function getStaticProps(context) {
         .embed()
         .then((data) => data[0])
         .catch(() => null);
-    }
-
-    // Default news category
-    if (!category) {
-      category = await wp
-        .categories()
-        .slug("news")
-        .embed()
-        .then((data) => data[0])
-        .catch(() => ({ slug: "news", name: "News" }));
     }
 
     return {
@@ -371,8 +391,6 @@ export async function getStaticProps(context) {
 }
 
 export async function getStaticPaths(context) {
-  // Бүх slug-уудыг runtime-д шийдэхийн тулд хоосон paths буцаах
-  // Энэ нь GraphQL ID болон WordPress slug хоёулангийг дэмжинэ
   return {
     paths: [],
     fallback: "blocking",

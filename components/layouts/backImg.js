@@ -68,23 +68,6 @@ class BackImg extends React.Component {
       );
     }
 
-    // Show WordPress image only if it successfully loaded
-    if (useWordPressImage && page && page.length > 0) {
-      const imageUrl = getData(page[0]._embedded, "image");
-      return (
-        <img
-          src={imageUrl}
-          alt="Background"
-          style={{
-            display: "block",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-      );
-    }
-
     // Fallback case
     return (
       <img

@@ -20,25 +20,41 @@ class StickyToolBar extends React.Component {
             title={item.title}
             href={
               item.object === "category"
-                ? `/c/[slug]`
+                ? item.slug === "branches"
+                  ? `/branches`
+                  : `/c/[slug]`
                 : item.object === "post"
-                ? `/d/[slug]`
-                : item.object === "page"
-                ? `/p/[slug]`
-                : item.object === "custom" && item.ID != 454
-                ? "[item.url]"
-                : `${item.slug}`
+                  ? `/d/[slug]`
+                  : item.object === "page"
+                    ? item.slug === "branches"
+                      ? `/contact`
+                      : item.slug === "calculator"
+                        ? `/calculator`
+                        : item.slug === "feedback"
+                          ? `/feedback`
+                          : `/p/[slug]`
+                    : item.object === "custom" && item.ID != 454
+                      ? "[item.url]"
+                      : `${item.slug}`
             }
             as={
               item.object === "category"
-                ? generateLink(`/c/${item.slug}`)
+                ? item.slug === "branches"
+                  ? `/branches`
+                  : generateLink(`/c/${item.slug}`)
                 : item.object === "post"
-                ? generateLink(`/d/${item.slug}`)
-                : item.object === "page"
-                ? generateLink(`/p/${item.slug}`)
-                : item.object === "custom" && item.ID != 454
-                ? `${item.url}`
-                : `${generateLink(item.slug)}`
+                  ? generateLink(`/d/${item.slug}`)
+                  : item.object === "page"
+                    ? item.slug === "branches"
+                      ? `/contact`
+                      : item.slug === "calculator"
+                        ? `/calculator`
+                        : item.slug === "feedback"
+                          ? `/feedback`
+                          : generateLink(`/p/${item.slug}`)
+                    : item.object === "custom" && item.ID != 454
+                      ? `${item.url}`
+                      : `${generateLink(item.slug)}`
             }
           >
             <a

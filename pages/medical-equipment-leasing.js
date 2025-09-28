@@ -33,7 +33,7 @@ const staticPostData = {
      
     `,
   },
-  featured_media: "/images/logo.png",
+  featured_media: "/images/product-detail/emneleg.jpg",
   date: "2024-01-01T00:00:00.000Z",
   modified: "2024-01-01T00:00:00.000Z",
   categories: [3],
@@ -78,9 +78,9 @@ const staticPostData = {
     },
     period: { value: "4", degree: "90" },
     fee: "0.5",
-    header_img: "/images/back.jpg",
+    header_img: "/product-detail/emneleg.jpg",
     pre_payment: { first_value: "20", gap: "10", degree: "30" },
-    img: "/images/back.jpg",
+    img: "/product-detail/emneleg.jpg",
     footer_btn: { btn_text: "", btn_id: "", file: false },
     labels: {
       requirements: "Тавигдах шалгуур",
