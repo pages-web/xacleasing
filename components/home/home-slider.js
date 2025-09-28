@@ -131,7 +131,7 @@ function HomeSlider() {
                     }}
                   >
                     {slide?.content ? (
-                      <Link href={`/services/${slide.slug}`}>
+                      <Link href={`/invites`}>
                         <button
                           style={{
                             backgroundColor: "transparent",
@@ -149,7 +149,6 @@ function HomeSlider() {
                     ) : (
                       <></>
                     )}
-                    {/* Title */}
                     <h1
                       style={{
                         fontSize: "22px",
