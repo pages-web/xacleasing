@@ -167,10 +167,6 @@ function VendorList(props) {
       <div
         key={post.id}
         className="slider-item slider-logo vendor-with-background"
-        onClick={() => {
-          setModalPost(post);
-          setVisible(true);
-        }}
         style={{
           position: "relative",
           background: backgroundColor,
@@ -191,15 +187,14 @@ function VendorList(props) {
             style={{
               position: "relative",
               zIndex: 2,
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
               borderRadius: "8px",
               padding: "10px",
               margin: "10px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "calc(100% - 20px)",
-              height: "calc(100% - 20px)",
+              width: "calc(100%)",
+              height: "calc(100%)",
             }}
           >
             <img
