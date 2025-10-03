@@ -247,7 +247,6 @@ function VendorList(props) {
     return transformedVendorPosts.filter((vendor) => vendor.categories && vendor.categories.includes(categoryId)).length;
   };
 
-  // Static categories based on new-car-vendors page
   const staticCategories = [
     { id: 2, name: `Шинэ автомашин нийлүүлэгч` },
     { id: 3, name: `Машин механизм нийлүүлэгч` },
@@ -255,7 +254,6 @@ function VendorList(props) {
   ];
 
   const renderMenuList = () => {
-    // Use static categories with vendor counts
     return staticCategories.map((category) => (
       <Menu.Item key={category.id} className={category.id === active ? "ant-menu-item-selected" : ""}>
         {category.name} ({getVendorCount(category.id)})
