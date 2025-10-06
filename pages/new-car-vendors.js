@@ -4,6 +4,7 @@ import { Col, Row, Modal, Card } from "antd";
 import { __ } from "../utils";
 import { useGraphQL } from "../providers/ApolloProvider";
 import Slider from "react-slick";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -108,18 +109,16 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
       slug: vendor.slug || vendor._id,
       categories: [categoryId], // Set category based on excerpt
       _embedded: vendor.thumbnail
-        ? [
-            {
-              "wp:featuredmedia": [
-                {
-                  source_url: vendor.thumbnail.url.startsWith("http")
-                    ? vendor.thumbnail.url
-                    : `https://xacleasing.app.erxes.io/gateway/read-file?key=${vendor.thumbnail.url}`,
-                },
-              ],
-            },
-          ]
-        : [],
+        ? {
+            "wp:featuredmedia": [
+              {
+                source_url: vendor.thumbnail.url.startsWith("http")
+                  ? vendor.thumbnail.url
+                  : `https://xacleasing.app.erxes.io/gateway/read-file?key=${vendor.thumbnail.url}`,
+              },
+            ],
+          }
+        : {},
     };
   });
 
@@ -152,48 +151,57 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
     setModalVisible(true);
   };
 
-  // Slider settings
-  const sliderSettings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    arrows: true,
-    dotsClass: "slick-dots slick-thumb",
-    appendDots: (dots) => (
-      <div style={{ marginTop: "20px" }}>
-        <ul style={{ margin: "0px" }}> {dots} </ul>
+  // Array of background colors for vendors (same as vendor-list.js)
+  const backgroundColors = [
+    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+    "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+    "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+    "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+    "linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)",
+  ];
+
+  // Custom arrow components (same as vendor-list.js)
+  function SamplePrevArrow({ onClick }) {
+    return (
+      <div className="border-round custom-arrow prv" onClick={onClick}>
+        <LeftOutlined />
       </div>
-    ),
-    customPaging: (i) => (
-      <div
-        style={{
-          width: "10px",
-          height: "10px",
-          borderRadius: "50%",
-          backgroundColor: "#ccc",
-          margin: "0 5px",
-        }}
-      ></div>
-    ),
+    );
+  }
+
+  function SampleNextArrow({ onClick }) {
+    return (
+      <div className="border-round custom-arrow nxt" onClick={onClick}>
+        <RightOutlined />
+      </div>
+    );
+  }
+
+  // Slider settings (matching vendor-list.js)
+  const dataLength = filteredVendors.length;
+  const sliderSettings = {
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    speed: 500,
+    rows: dataLength > 4 ? 2 : 1,
+    infinite: dataLength > 8,
+    autoplay: dataLength > 0,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
     responsive: [
+      { breakpoint: 1200, settings: { slidesToShow: 3 } },
+      { breakpoint: 991, settings: { slidesToShow: 2 } },
       {
-        breakpoint: 1024,
+        breakpoint: 480,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1,
-          dots: true,
-          arrows: true,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          dots: true,
-          arrows: true,
+          rows: 1,
+          autoplay: false,
         },
       },
     ],
@@ -251,66 +259,118 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                         </Col>
                         <Col xs={24} sm={14} lg={16} className="vendorlist">
                           {filteredVendors.length > 0 ? (
-                            <div style={{ position: "relative" }}>
+                            <>
                               <style jsx>{`
-                                .vendor-slider .slick-prev,
-                                .vendor-slider .slick-next {
-                                  width: 40px;
-                                  height: 40px;
+                                .vendor-with-background:hover {
+                                  transform: scale(1.05) !important;
+                                  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+                                }
+
+                                .vendor-with-background:hover::before {
+                                  content: "";
+                                  position: absolute;
+                                  top: 0;
+                                  left: 0;
+                                  right: 0;
+                                  bottom: 0;
+                                  background: rgba(255, 255, 255, 0.1);
                                   z-index: 1;
+                                  border-radius: 12px;
                                 }
-                                .vendor-slider .slick-prev {
-                                  left: -50px;
+
+                                .vendor-slider .slick-slide {
+                                  padding: 0 5px;
                                 }
-                                .vendor-slider .slick-next {
-                                  right: -50px;
-                                }
-                                .vendor-slider .slick-dots {
-                                  bottom: -50px;
-                                }
-                                .vendor-slider .slick-dots li {
-                                  margin: 0 3px;
-                                }
-                                .vendor-slider .slick-dots li button:before {
-                                  font-size: 12px;
-                                  color: #ccc;
-                                }
-                                .vendor-slider .slick-dots li.slick-active button:before {
-                                  color: #1890ff;
+
+                                .vendor-slider .slick-list {
+                                  margin: 0 -5px;
                                 }
                               `}</style>
                               <Slider className="vendor-slider" {...sliderSettings}>
-                                {filteredVendors.map((vendor, index) => (
-                                  <div key={vendor.id || index} className="vendor-item-wrapper">
-                                    <Card
-                                      hoverable
-                                      className="vendor-card"
+                                {filteredVendors.map((vendor, index) => {
+                                  const imageUrl = vendor._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+                                  const backgroundColor = backgroundColors[index % backgroundColors.length];
+
+                                  return (
+                                    <div
+                                      key={vendor.id}
+                                      className="slider-item slider-logo vendor-with-background"
                                       style={{
-                                        height: "300px",
-                                        margin: "10px",
-                                        backgroundColor: "white",
-                                        zIndex: 3,
+                                        position: "relative",
+                                        background: backgroundColor,
+                                        borderRadius: "12px",
+                                        overflow: "hidden",
+                                        margin: "0 5px",
+                                        height: "130px",
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        flexDirection: "column",
+                                        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                                        transition: "all 0.3s ease",
+                                        cursor: "pointer",
                                       }}
-                                      cover={
-                                        vendor._embedded?.[0]?.["wp:featuredmedia"]?.[0]?.source_url && (
-                                          <img
-                                            alt={vendor.title.rendered}
-                                            src={vendor._embedded[0]["wp:featuredmedia"][0].source_url}
-                                            style={{ height: 200, objectFit: "contain", padding: "10px" }}
-                                          />
-                                        )
-                                      }
+                                      onClick={() => handleVendorClick(vendor)}
                                     >
-                                      <Card.Meta title={vendor.title.rendered} />
-                                    </Card>
-                                  </div>
-                                ))}
+                                      {imageUrl && (
+                                        <div
+                                          style={{
+                                            position: "relative",
+                                            zIndex: 2,
+                                            borderRadius: "8px",
+                                            padding: "10px",
+                                            margin: "10px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: "calc(100%)",
+                                            height: "calc(100%)",
+                                          }}
+                                        >
+                                          <img
+                                            className="dark-img"
+                                            src={imageUrl}
+                                            alt={vendor.title.rendered}
+                                            style={{
+                                              maxWidth: "100%",
+                                              maxHeight: "100%",
+                                              objectFit: "contain",
+                                            }}
+                                          />
+                                          <img
+                                            className="light-img"
+                                            src={imageUrl}
+                                            alt={vendor.title.rendered}
+                                            style={{
+                                              maxWidth: "100%",
+                                              maxHeight: "100%",
+                                              objectFit: "contain",
+                                            }}
+                                          />
+                                        </div>
+                                      )}
+                                      {!imageUrl && (
+                                        <div
+                                          className="vendor-placeholder"
+                                          style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            color: "#fff",
+                                            fontWeight: "500",
+                                            textAlign: "center",
+                                            padding: "10px",
+                                          }}
+                                        >
+                                          {vendor.title.rendered}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </Slider>
-                            </div>
+                            </>
                           ) : (
                             <div className="no-data">{__("Мэдээлэл байхгүй байна")}</div>
                           )}
@@ -318,6 +378,16 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                       </Row>
 
                       {/* Vendor Detail Modal */}
+                      <Modal
+                        title={selectedVendor?.title?.rendered || ""}
+                        open={modalVisible}
+                        onCancel={() => setModalVisible(false)}
+                        footer={null}
+                        width={992}
+                        wrapClassName="vendor-modal"
+                      >
+                        {selectedVendor && <div dangerouslySetInnerHTML={{ __html: selectedVendor.content.rendered }} />}
+                      </Modal>
                     </>
                   )}
 
