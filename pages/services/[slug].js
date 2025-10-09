@@ -289,20 +289,18 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
           <Row justify="center" className="h-100">
             <Col xs={22} sm={22} md={20} lg={18} xl={16} className="h-100">
               <div className="page-wrapper-content h-100">
-                <Row justify="center pt-2">
-                  <Col span={22}>
-                    <h2 className="title my-2 pl-2 upper-case">
-                      {regex(postTitle)}
-                    </h2>
-                    {postImage && (
-                      <img
-                        className="w-100 p-1"
-                        src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${postImage}`}
-                        alt={postTitle}
-                      />
-                    )}
-                  </Col>
-                  <Col xs={20} lg={22} className="post-detail p-1">
+                <div className="w-100">
+                  <h2 className="title my-2 pl-2 upper-case">
+                    {regex(postTitle)}
+                  </h2>
+                  {postImage && (
+                    <img
+                      className="w-100 p-1"
+                      src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${postImage}`}
+                      alt={postTitle}
+                    />
+                  )}
+                  <div className="post-detail p-1 w-100">
                     <div
                       className="my-2"
                       dangerouslySetInnerHTML={{ __html: postContent }}
@@ -313,8 +311,8 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
                         <p>GraphQL алдаа: {graphqlError}</p>
                       </div>
                     )}
-                  </Col>
-                </Row>
+                  </div>
+                </div>
                 {renderNewsShare()}
               </div>
             </Col>
@@ -332,6 +330,36 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
       <style global jsx>{`
         .border.absolute {
           border: none;
+        }
+        .post-detail {
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow-x: auto;
+        }
+        .post-detail table {
+          width: 100% !important;
+          max-width: 100% !important;
+          table-layout: auto;
+          word-wrap: break-word;
+        }
+        .post-detail img {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+        .post-detail p,
+        .post-detail div {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        @media (max-width: 768px) {
+          .post-detail table {
+            font-size: 12px;
+          }
+          .post-detail td,
+          .post-detail th {
+            padding: 4px !important;
+            font-size: 12px;
+          }
         }
       `}</style>
     </Layout>
