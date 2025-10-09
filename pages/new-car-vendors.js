@@ -55,7 +55,9 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
 
     try {
       const variables = {
-        clientPortalId: process.env.NEXT_PUBLIC_ERXES_CLIENT_PORTAL_ID || "cp-wzk8M6gshwVUeGnfdR",
+        clientPortalId:
+          process.env.NEXT_PUBLIC_ERXES_CLIENT_PORTAL_ID ||
+          "cp-wzk8M6gshwVUeGnfdR",
         tagIds: ["yPfazYFeIaYr1OY5mhUxH"],
         page: 1,
         perPage: 100,
@@ -99,7 +101,9 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
   // Transform GraphQL data to match VendorList expected props
   const transformedVendorPosts = graphqlVendors.map((vendor) => {
     const categoryId = getCategoryFromExcerpt(vendor.excerpt);
-    console.log(`Vendor: ${vendor.title}, Excerpt: ${vendor.excerpt}, Category ID: ${categoryId}`);
+    console.log(
+      `Vendor: ${vendor.title}, Excerpt: ${vendor.excerpt}, Category ID: ${categoryId}`
+    );
 
     return {
       id: vendor._id,
@@ -128,7 +132,9 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
   // Count vendors by category
   const getVendorCount = (categoryId) => {
     if (categoryId === 4) return transformedVendorPosts.length;
-    return transformedVendorPosts.filter((vendor) => vendor.categories.includes(categoryId)).length;
+    return transformedVendorPosts.filter((vendor) =>
+      vendor.categories.includes(categoryId)
+    ).length;
   };
 
   // All categories including "Бүгд" (All)
@@ -143,7 +149,10 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
   const filteredVendors =
     activeCategory === 4
       ? transformedVendorPosts
-      : transformedVendorPosts.filter((vendor) => vendor.categories && vendor.categories.includes(activeCategory));
+      : transformedVendorPosts.filter(
+          (vendor) =>
+            vendor.categories && vendor.categories.includes(activeCategory)
+        );
 
   // Handle vendor card click
   const handleVendorClick = (vendor) => {
@@ -208,7 +217,12 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
   };
 
   return (
-    <Layout loading={loading} title={__("Шинэ автомашины борлуулагчид")} menu={mainMenu} stickyMenu={stickyMenu}>
+    <Layout
+      loading={loading}
+      title={__("Шинэ автомашины борлуулагчид")}
+      menu={mainMenu}
+      stickyMenu={stickyMenu}
+    >
       <div className="content-wrapper">
         <div className="w-100 page-wrapper transparent">
           <Row justify="center" className="h-100">
@@ -223,14 +237,33 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
 
                   {!vendorsLoading && (
                     <>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                        <h2 className="title pb-2 purple mt-4">{__("ХАМТРАН АЖИЛЛАДАГ НИЙЛҮҮЛЭГЧ БАЙГУУЛЛАГУУД")}</h2>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <h2 className="title pb-2 purple mt-4">
+                          {__("ХАМТРАН АЖИЛЛАДАГ НИЙЛҮҮЛЭГЧ БАЙГУУЛЛАГУУД")}
+                        </h2>
                       </div>
-                      <Row justify="center" align="middle" gutter={92} className="mt-2 overflow">
+                      <Row
+                        justify="center"
+                        align="middle"
+                        gutter={92}
+                        className="mt-2 overflow"
+                      >
                         <Col xs={24} sm={10} lg={8}>
                           <div
                             className="category-filter"
-                            style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "10px",
+                              alignItems: "flex-start",
+                            }}
                           >
                             {allCategories.map((category) => (
                               <button
@@ -240,7 +273,12 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  console.log("Category clicked:", category.name, "ID:", category.id);
+                                  console.log(
+                                    "Category clicked:",
+                                    category.name,
+                                    "ID:",
+                                    category.id
+                                  );
                                   setActiveCategory(category.id);
                                 }}
                                 style={{
@@ -248,7 +286,10 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                                   padding: "12px 16px",
                                   margin: "4px 0",
                                   backgroundColor: "transparent",
-                                  color: activeCategory === category.id ? "#fec637" : "",
+                                  color:
+                                    activeCategory === category.id
+                                      ? "#fec637"
+                                      : "",
                                   transition: "all 0.3s ease",
                                 }}
                               >
@@ -261,23 +302,6 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                           {filteredVendors.length > 0 ? (
                             <>
                               <style jsx>{`
-                                .vendor-with-background:hover {
-                                  transform: scale(1.05) !important;
-                                  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
-                                }
-
-                                .vendor-with-background:hover::before {
-                                  content: "";
-                                  position: absolute;
-                                  top: 0;
-                                  left: 0;
-                                  right: 0;
-                                  bottom: 0;
-                                  background: rgba(255, 255, 255, 0.1);
-                                  z-index: 1;
-                                  border-radius: 12px;
-                                }
-
                                 .vendor-slider .slick-slide {
                                   padding: 0 5px;
                                 }
@@ -286,10 +310,18 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                                   margin: 0 -5px;
                                 }
                               `}</style>
-                              <Slider className="vendor-slider" {...sliderSettings}>
+                              <Slider
+                                className="vendor-slider"
+                                {...sliderSettings}
+                              >
                                 {filteredVendors.map((vendor, index) => {
-                                  const imageUrl = vendor._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
-                                  const backgroundColor = backgroundColors[index % backgroundColors.length];
+                                  const imageUrl =
+                                    vendor._embedded?.["wp:featuredmedia"]?.[0]
+                                      ?.source_url;
+                                  const backgroundColor =
+                                    backgroundColors[
+                                      index % backgroundColors.length
+                                    ];
 
                                   return (
                                     <div
@@ -305,11 +337,11 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                                        boxShadow:
+                                          "0 4px 15px rgba(0, 0, 0, 0.1)",
                                         transition: "all 0.3s ease",
                                         cursor: "pointer",
                                       }}
-                                      onClick={() => handleVendorClick(vendor)}
                                     >
                                       {imageUrl && (
                                         <div
@@ -372,7 +404,9 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                               </Slider>
                             </>
                           ) : (
-                            <div className="no-data">{__("Мэдээлэл байхгүй байна")}</div>
+                            <div className="no-data">
+                              {__("Мэдээлэл байхгүй байна")}
+                            </div>
                           )}
                         </Col>
                       </Row>
@@ -386,7 +420,13 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                         width={992}
                         wrapClassName="vendor-modal"
                       >
-                        {selectedVendor && <div dangerouslySetInnerHTML={{ __html: selectedVendor.content.rendered }} />}
+                        {selectedVendor && (
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: selectedVendor.content.rendered,
+                            }}
+                          />
+                        )}
                       </Modal>
                     </>
                   )}
