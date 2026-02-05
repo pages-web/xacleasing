@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import WPAPI from "wpapi";
 import Error from "next/error";
 import { Col, Divider, Row, Menu, Dropdown } from "antd";
 import config, { generateLink } from "../../config";
@@ -369,70 +368,25 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
 export async function getStaticProps(context) {
   const slug = context.params?.slug;
 
-  try {
-    if (!post && slug && !isNaN(slug)) {
-      post = await wp
-        .posts()
-        .id(slug)
-        .embed()
-        .then((data) => data)
-        .catch(() => null);
-    }
+  const post = {
+    id: slug,
+    _id: slug,
+    slug: slug,
+    title: "",
+    content: "",
+    excerpt: "",
+    categories: [],
+  };
 
-    if (!post) {
-      post = {
-        id: slug,
-        _id: slug,
-        slug: slug,
-        title: { rendered: "" },
-        content: { rendered: "" },
-        excerpt: { rendered: "" },
-        categories: [],
-      };
-    }
+  const category = {
+    slug: "services",
+    name: "Services",
+  };
 
-    let category = null;
-    if (post && post.categories && post.categories.length > 0) {
-      category = await wp
-        .categories()
-        .id(post.categories[0])
-        .perPage(1)
-        .embed()
-        .then((data) => data[0])
-        .catch(() => null);
-    }
-
-    if (!category) {
-      category = await wp
-        .categories()
-        .slug("news")
-        .embed()
-        .then((data) => data[0])
-        .catch(() => ({ slug: "news", name: "News" }));
-    }
-
-    return {
-      props: { post, category },
-      revalidate: 300,
-    };
-  } catch (error) {
-    console.error("Error fetching news detail:", error);
-    return {
-      props: {
-        post: {
-          id: slug,
-          _id: slug,
-          slug: slug,
-          title: { rendered: "" },
-          content: { rendered: "" },
-          excerpt: { rendered: "" },
-          categories: [],
-        },
-        category: { slug: "news", name: "News" },
-      },
-      revalidate: 300,
-    };
-  }
+  return {
+    props: { post, category },
+    revalidate: 300,
+  };
 }
 
 export async function getStaticPaths(context) {
