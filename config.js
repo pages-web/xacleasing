@@ -1,7 +1,4 @@
 import queryString from "query-string";
-import axios from "axios";
-
-export const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export const getLang = (context) => {
   let lang = getParam("lang") || "";
@@ -22,16 +19,6 @@ export const getParam = (name) => {
   return null;
 };
 
-const config = (locale) => {
-  // Remove language prefix from API URL to avoid redirect issues
-  // The WordPress API doesn't need language-specific endpoints
-  return {
-    apiUrl: `https://admin.xacleasing.mn/wp-json`,
-  };
-};
-
 export const generateLink = (url) => {
   return `${url}`;
 };
-
-export default config;

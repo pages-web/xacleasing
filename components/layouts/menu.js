@@ -86,7 +86,15 @@ class MenuComponent extends React.Component {
 
     return (
       <div onClick={onClick}>
-        <img className="language-flag" src={currentLanguage === "mn" ? "/images/flags/mnflag.png" : "/images/flags/enflag.png"} alt="language-flag" />
+        <img
+          className="language-flag"
+          src={
+            currentLanguage === "mn"
+              ? "/images/flags/mnflag.png"
+              : "/images/flags/enflag.png"
+          }
+          alt="language-flag"
+        />
       </div>
     );
   }
@@ -137,7 +145,9 @@ class MenuComponent extends React.Component {
     const { asPath } = this.props.router;
 
     const objectType = this.renderType(subItem.slug, subItem.object);
-    const isActiveClass = asPath ? asPath.includes(objectType + slug) : url === asPath;
+    const isActiveClass = asPath
+      ? asPath.includes(objectType + slug)
+      : url === asPath;
 
     return (
       <li key={subItem.ID} className={`${isActiveClass && "active"}`}>
@@ -171,7 +181,9 @@ class MenuComponent extends React.Component {
         <li key={item.ID} className="main-sub-menu h-100">
           <span>{item.title}</span>
           <div className="sub-menu">
-            <ul className="list-style-none">{item.child_items.map((subItem) => this.renderChild(subItem))}</ul>
+            <ul className="list-style-none">
+              {item.child_items.map((subItem) => this.renderChild(subItem))}
+            </ul>
           </div>
         </li>
       );
@@ -204,7 +216,12 @@ class MenuComponent extends React.Component {
     return (
       <div className="switch-mode">
         {/* <span key="dark">Dark</span> */}
-        <Switch key="switch-mode" checked={theme === "dark" ? false : true} onChange={toggleTheme} onClick={() => this.changeTheme(toggleTheme)} />
+        <Switch
+          key="switch-mode"
+          checked={theme === "dark" ? false : true}
+          onChange={toggleTheme}
+          onClick={() => this.changeTheme(toggleTheme)}
+        />
         {/* <span key="light">Light</span> */}
       </div>
     );
@@ -218,10 +235,18 @@ class MenuComponent extends React.Component {
     return (
       <Row>
         <Col span={12} className="with-border">
-          <ul className="list-style-none">{menu.items.slice(0, 2).map((subItem) => this.renderSubItem(subItem))}</ul>
+          <ul className="list-style-none">
+            {menu.items
+              .slice(0, 2)
+              .map((subItem) => this.renderSubItem(subItem))}
+          </ul>
         </Col>
         <Col span={12}>
-          <ul className="list-style-none right-list">{menu.items.slice(2, 4).map((subItem) => this.renderSubItem(subItem))}</ul>
+          <ul className="list-style-none right-list">
+            {menu.items
+              .slice(2, 4)
+              .map((subItem) => this.renderSubItem(subItem))}
+          </ul>
         </Col>
       </Row>
     );
@@ -237,19 +262,56 @@ class MenuComponent extends React.Component {
       return (
         <>
           <div className="logo d-flex space-between mobile-logo">
-            <Button className="mobile-menu-button h-100" type="link" onClick={this.showDrawer}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="9" viewBox="0 0 20 9">
-                <g id="burgerMenu" data-name="burger-menu" transform="translate(-322 -61.5)">
-                  <line id="Line_19" data-name="Line 19" x2="10" transform="translate(322 62)" fill="none" stroke="#fff" strokeWidth="1" />
-                  <line id="Line_20" data-name="Line 20" x2="20" transform="translate(322 70)" fill="none" stroke="#fff" strokeWidth="1" />
+            <Button
+              className="mobile-menu-button h-100"
+              type="link"
+              onClick={this.showDrawer}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="9"
+                viewBox="0 0 20 9"
+              >
+                <g
+                  id="burgerMenu"
+                  data-name="burger-menu"
+                  transform="translate(-322 -61.5)"
+                >
+                  <line
+                    id="Line_19"
+                    data-name="Line 19"
+                    x2="10"
+                    transform="translate(322 62)"
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth="1"
+                  />
+                  <line
+                    id="Line_20"
+                    data-name="Line 20"
+                    x2="20"
+                    transform="translate(322 70)"
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth="1"
+                  />
                 </g>
               </svg>
             </Button>
             {this.renderLogo()}
           </div>
 
-          <Drawer className="mobile-menu" placement="left" closable={false} onClose={this.onClose} visible={this.state.drawerVisible}>
-            <ul className="list-style-none">{menu.items.map((subItem) => this.renderSubItem(subItem))}</ul>
+          <Drawer
+            className="mobile-menu"
+            placement="left"
+            closable={false}
+            onClose={this.onClose}
+            visible={this.state.drawerVisible}
+          >
+            <ul className="list-style-none">
+              {menu.items.map((subItem) => this.renderSubItem(subItem))}
+            </ul>
           </Drawer>
         </>
       );
@@ -258,10 +320,35 @@ class MenuComponent extends React.Component {
     return (
       <ul className="d-flex menu-horizontal h-100">
         <div className="menu-icon" onClick={this.toggleMenu}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="9" viewBox="0 0 20 9">
-            <g id="burgerMenu" data-name="burger-menu" transform="translate(-322 -61.5)">
-              <line id="Line_19" data-name="Line 19" x2="10" transform="translate(322 62)" fill="none" stroke="#fff" strokeWidth="1" />
-              <line id="Line_20" data-name="Line 20" x2="20" transform="translate(322 70)" fill="none" stroke="#fff" strokeWidth="1" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="9"
+            viewBox="0 0 20 9"
+          >
+            <g
+              id="burgerMenu"
+              data-name="burger-menu"
+              transform="translate(-322 -61.5)"
+            >
+              <line
+                id="Line_19"
+                data-name="Line 19"
+                x2="10"
+                transform="translate(322 62)"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+              />
+              <line
+                id="Line_20"
+                data-name="Line 20"
+                x2="20"
+                transform="translate(322 70)"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+              />
             </g>
           </svg>
         </div>
@@ -274,10 +361,20 @@ class MenuComponent extends React.Component {
   renderMobileMenu() {
     return (
       <>
-        <Button className="menu-button h-100" type="link" onClick={this.showDrawer}>
+        <Button
+          className="menu-button h-100"
+          type="link"
+          onClick={this.showDrawer}
+        >
           <i className="fas fa-bars" />
         </Button>
-        <Drawer className="mobile-menu" placement="right" closable={false} onClose={this.onClose} visible={this.state.drawerVisible}></Drawer>
+        <Drawer
+          className="mobile-menu"
+          placement="right"
+          closable={false}
+          onClose={this.onClose}
+          visible={this.state.drawerVisible}
+        ></Drawer>
       </>
     );
   }
@@ -311,8 +408,19 @@ class MenuComponent extends React.Component {
               </div>
             </Col>
             <Col md={0} lg={3} xl={4} align="center">
-              <Space align="center" key="right-menu-space" size={[16, 0]} wrap className="h-100">
-                <a key="mobile" rel="noopener noreferrer nofollow" href="tel:+97670112061" className="telephone">
+              <Space
+                align="center"
+                key="right-menu-space"
+                size={[16, 0]}
+                wrap
+                className="h-100"
+              >
+                <a
+                  key="mobile"
+                  rel="noopener noreferrer nofollow"
+                  href="tel:+97670112061"
+                  className="telephone"
+                >
                   <PhoneOutlined /> +976 7011-2061
                 </a>
                 {/* <a key="login" href="https://e-leasing.mn/" target="_blank" className="login-btn">
@@ -323,7 +431,10 @@ class MenuComponent extends React.Component {
           </Row>
         </div>
 
-        <div className={`mega-menu ${this.state.toggleMenu && "show"}`} scroll="no">
+        <div
+          className={`mega-menu ${this.state.toggleMenu && "show"}`}
+          scroll="no"
+        >
           <Row justify="center" align="middle" className="h-100 w-100">
             <Col span={16}>
               {this.renderMegaMenu()}

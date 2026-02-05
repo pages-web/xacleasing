@@ -7,7 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { setLocale } from "../utils";
-import config, { getLang, fetcher } from "../config";
+import { getLang } from "../config";
 import { Providers } from "../providers/index";
 
 Router.events.on("routeChangeStart", () => {
@@ -51,18 +51,18 @@ function MyApp({ Component, pageProps, lang, mainMenu, stickyMenu }) {
 
   return (
     <Providers>
-      <Component {...pageProps} mainMenu={mainMenu} stickyMenu={stickyMenu?.items || []} loading={loading} />
+      <Component
+        {...pageProps}
+        mainMenu={mainMenu}
+        stickyMenu={stickyMenu?.items || []}
+        loading={loading}
+      />
     </Providers>
   );
 }
 
 MyApp.getInitialProps = async (appContext) => {
-  // calls page's `getInitialProps` and fills `appProps.pageProps`
-  let mainMenu = (await fetcher(`${config(appContext.ctx.locale).apiUrl}/menus/v1/menus/main-menu`)) || { items: [] }; // Provide fallback
-
-  const stickyMenu = (await fetcher(`${config(appContext.ctx.locale).apiUrl}/menus/v1/menus/toolbar-menu`)) || { items: [] }; // Provide fallback
-
-  // Add static leasing pages to the menu if they don't exist
+  // Static leasing pages
   const staticLeasingPages = [
     {
       ID: 9001,
@@ -94,106 +94,147 @@ MyApp.getInitialProps = async (appContext) => {
     },
   ];
 
-  // Create fallback menu if WordPress API fails
-  if (!mainMenu.items || mainMenu.items.length === 0) {
-    mainMenu = {
-      items: [
-        {
-          ID: 1,
-          title: "Бүтээгдэхүүн үйлчилгээ",
-          slug: "products-services",
-          url: "/products-services",
-          object: "page",
-          child_items: [],
-        },
-        {
-          ID: 2,
-          title: "Нийлүүлэгчид",
-          slug: "vendors",
-          url: "/vendors",
-          object: "page",
-          child_items: [],
-        },
-        {
-          ID: 3,
-          title: "Бидний тухай",
-          slug: "about",
-          url: "/about",
-          object: "page",
-          child_items: [],
-        },
-        {
-          ID: 4,
-          title: "Тусламж",
-          slug: "help",
-          url: "/help",
-          object: "page",
-          child_items: [],
-        },
-      ],
-    };
-
-    // Add static leasing pages to fallback menu's first item
-    if (mainMenu.items[0] && mainMenu.items[0].title === "Бүтээгдэхүүн үйлчилгээ") {
-      mainMenu.items[0].child_items = [...staticLeasingPages];
-    }
-  }
-
-  // Find "Бүтээгдэхүүн үйлчилгээ" menu item and add leasing pages as children
-  if (mainMenu.items && mainMenu.items.length > 0) {
-    const productServiceItem = mainMenu.items.find(
-      (item) =>
-        item.title === "Бүтээгдэхүүн үйлчилгээ" ||
-        item.title === "Products & Services" ||
-        item.title.includes("Бүтээгдэхүүн") ||
-        item.title.includes("Product")
-    );
-
-    if (productServiceItem) {
-      if (!productServiceItem.child_items) {
-        productServiceItem.child_items = [];
-      }
-
-      // Add static leasing pages to existing child items
-      staticLeasingPages.forEach((page) => {
-        const exists = productServiceItem.child_items.some((child) => child.slug === page.slug || child.title === page.title);
-        if (!exists) {
-          productServiceItem.child_items.push(page);
-        }
-      });
-
-      // Move "Бүтээгдэхүүн үйлчилгээ" to first position
-      const productServiceIndex = mainMenu.items.findIndex(
-        (item) =>
-          item.title === "Бүтээгдэхүүн үйлчилгээ" ||
-          item.title === "Products & Services" ||
-          item.title.includes("Бүтээгдэхүүн") ||
-          item.title.includes("Product")
-      );
-
-      if (productServiceIndex > 0) {
-        // Remove from current position and add to beginning
-        const [movedItem] = mainMenu.items.splice(productServiceIndex, 1);
-        mainMenu.items.unshift(movedItem);
-      }
-    } else {
-      // If no product service item found, add it to the beginning
-      const productServiceItem = {
+  // Static main menu (no WordPress dependency)
+  const mainMenu = {
+    items: [
+      {
         ID: 1,
         title: "Бүтээгдэхүүн үйлчилгээ",
         slug: "products-services",
         url: "/products-services",
         object: "page",
-        child_items: [],
-      };
+        child_items: [...staticLeasingPages],
+      },
+      {
+        ID: 2,
+        title: "Нийлүүлэгчид",
+        slug: "vendors",
+        url: "/vendors",
+        object: "page",
+        child_items: [
+          {
+            ID: 2001,
+            title: "Шинэ автомашины нийлүүлэгчид",
+            slug: "new-car-vendors",
+            url: "/new-car-vendors",
+            object: "page",
+          },
+          {
+            ID: 2002,
+            title: "Машин механизм нийлүүлэгч",
+            slug: "new-car-vendors",
+            url: "/new-car-vendors",
+            object: "page",
+          },
+          {
+            ID: 2003,
+            title: "Тоног төхөөрөмж нийлүүлэгч",
+            slug: "new-car-vendors",
+            url: "/new-car-vendors",
+            object: "page",
+          },
+          {
+            ID: 2004,
+            title: "Нийлүүлэгч хэрхэн болох вэ?",
+            slug: "how-to-become-vendor",
+            url: "/how-to-become-vendor",
+            object: "page",
+          },
+        ],
+      },
+      {
+        ID: 3,
+        title: "Бидний тухай",
+        slug: "about",
+        url: "/about",
+        object: "page",
+        child_items: [
+          {
+            ID: 3001,
+            title: "Бидний тухай",
+            slug: "about",
+            url: "/about",
+            object: "page",
+          },
+          {
+            ID: 3002,
+            title: "Группын тухай",
+            slug: "about-group",
+            url: "/about-group",
+            object: "page",
+          },
+          {
+            ID: 3003,
+            title: "Мэдээлэл",
+            slug: "news",
+            url: "/news",
+            object: "page",
+          },
+          {
+            ID: 3004,
+            title: "Хүний нөөц",
+            slug: "hr",
+            url: "/career/hr",
+            object: "page",
+          },
+        ],
+      },
+      {
+        ID: 4,
+        title: "Тусламж",
+        slug: "help",
+        url: "/help",
+        object: "page",
+        child_items: [
+          {
+            ID: 4001,
+            title: "Салбарууд",
+            slug: "branches",
+            url: "/branches",
+            object: "page",
+          },
+          {
+            ID: 4002,
+            title: "Холбоо барих",
+            slug: "contact",
+            url: "/contact",
+            object: "page",
+          },
+          {
+            ID: 4003,
+            title: "Лого татах",
+            slug: "logo",
+            url: "/logo",
+            object: "page",
+          },
+          {
+            ID: 4004,
+            title: "Өргөдөл, маягт татах",
+            slug: "download-application-form",
+            url: "/download-application-form",
+            object: "page",
+          },
+          {
+            ID: 4005,
+            title: "Түгээмэл асуулт хариулт",
+            slug: "faq",
+            url: "/faq",
+            object: "page",
+          },
+          {
+            ID: 4006,
+            title: "Тооцоолуур",
+            slug: "calculator",
+            url: "/calculator",
+            object: "page",
+          },
+        ],
+      },
+    ],
+  };
 
-      // Add static leasing pages to the new product service item
-      productServiceItem.child_items = [...staticLeasingPages];
-
-      // Add to beginning of menu
-      mainMenu.items.unshift(productServiceItem);
-    }
-  }
+  // Static sticky menu (no WordPress dependency)
+  const stickyMenu = { items: [] };
 
   const appProps = await App.getInitialProps(appContext);
 

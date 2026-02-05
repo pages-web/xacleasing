@@ -5,7 +5,6 @@ import Layout from "../components/layouts/Layout";
 import ReactPageScroller from "../components/react-page-scroller";
 import { __ } from "../utils";
 import { useGraphQL } from "../providers/ApolloProvider";
-import config from "../config";
 
 const GET_ABOUT_POSTS = `
 query PostList(
@@ -59,35 +58,6 @@ const About = ({ mainMenu, stickyMenu }) => {
   const [data, setData] = useState(null);
   const { query } = useGraphQL();
 
-  // Fallback function to fetch from WordPress API
-  const fetchFromWordPress = async () => {
-    try {
-      const response = await fetch(`${config().apiUrl}/wp/v2/posts?per_page=20&categories=5`); // Assuming category 5 is for "About"
-      if (!response.ok) throw new Error("WordPress API request failed");
-
-      const wpPosts = await response.json();
-      const transformedData = {
-        posts: wpPosts.map((post) => ({
-          _id: post.id.toString(),
-          title: post.title.rendered,
-          content: post.content.rendered,
-          createdAt: post.date,
-          updatedAt: post.modified,
-          status: post.status.toUpperCase(),
-          thumbnail: post.featured_media ? { url: post.featured_media } : null,
-        })),
-        totalCount: wpPosts.length,
-        currentPage: 1,
-        totalPages: 1,
-      };
-
-      setData(transformedData);
-    } catch (wpError) {
-      console.error("WordPress API also failed:", wpError);
-      setError("Both GraphQL and WordPress API failed to load data");
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -108,9 +78,8 @@ const About = ({ mainMenu, stickyMenu }) => {
           throw new Error("No data received from GraphQL query");
         }
       } catch (err) {
-        console.error("GraphQL Error, trying WordPress API:", err);
-        // Fallback to WordPress API
-        await fetchFromWordPress();
+        console.error("GraphQL Error:", err);
+        setError("Failed to load data from GraphQL");
       } finally {
         setLoading(false);
       }
@@ -137,8 +106,14 @@ const About = ({ mainMenu, stickyMenu }) => {
   };
 
   const renderSubContent = (type, post) => {
-    if (type === "img" && typeof window !== "undefined" && window.innerWidth > 480) {
-      const imageUrl = post?.thumbnail?.url ? `https://xacleasing.app.erxes.io/gateway/read-file?key=${post.thumbnail.url}` : "/images/logo.png"; // Fallback to existing logo
+    if (
+      type === "img" &&
+      typeof window !== "undefined" &&
+      window.innerWidth > 480
+    ) {
+      const imageUrl = post?.thumbnail?.url
+        ? `https://xacleasing.app.erxes.io/gateway/read-file?key=${post.thumbnail.url}`
+        : "/images/logo.png"; // Fallback to existing logo
 
       return (
         <img
@@ -195,7 +170,14 @@ const About = ({ mainMenu, stickyMenu }) => {
     const pageNumbers = [];
 
     for (let i = 0; i < Math.min(posts.length, 2); i++) {
-      pageNumbers.push(<Pagination.Item key={i} name={i} active={i === currentPage} onClick={(e) => paginationClicked(e)}></Pagination.Item>);
+      pageNumbers.push(
+        <Pagination.Item
+          key={i}
+          name={i}
+          active={i === currentPage}
+          onClick={(e) => paginationClicked(e)}
+        ></Pagination.Item>,
+      );
     }
     return pageNumbers;
   };
@@ -205,19 +187,32 @@ const About = ({ mainMenu, stickyMenu }) => {
   return (
     <Layout title={__("Бидний тухай")} menu={mainMenu} stickyMenu={stickyMenu}>
       {loading && (
-        <div className="loading-container" style={{ textAlign: "center", padding: "50px" }}>
+        <div
+          className="loading-container"
+          style={{ textAlign: "center", padding: "50px" }}
+        >
           <div>{__("Уншиж байна...")} ⏳</div>
         </div>
       )}
 
       {error && (
-        <div className="error-container" style={{ textAlign: "center", padding: "50px", color: "red" }}>
+        <div
+          className="error-container"
+          style={{ textAlign: "center", padding: "50px", color: "red" }}
+        >
           <div>
             {__("Алдаа гарлаа")}: {error}
           </div>
           <button
             onClick={() => window.location.reload()}
-            style={{ marginTop: "10px", padding: "10px 20px", background: "#1890ff", color: "white", border: "none", borderRadius: "4px" }}
+            style={{
+              marginTop: "10px",
+              padding: "10px 20px",
+              background: "#1890ff",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+            }}
           >
             {__("Дахин оролдох")}
           </button>
@@ -225,7 +220,10 @@ const About = ({ mainMenu, stickyMenu }) => {
       )}
 
       {!loading && !error && posts.length === 0 && (
-        <div className="no-content" style={{ textAlign: "center", padding: "50px" }}>
+        <div
+          className="no-content"
+          style={{ textAlign: "center", padding: "50px" }}
+        >
           <div>{__("Мэдээлэл байхгүй байна")}</div>
         </div>
       )}
@@ -241,7 +239,12 @@ const About = ({ mainMenu, stickyMenu }) => {
             {posts.slice(0, 2).map((post, index) => (
               <div key={post._id || index} className="component center">
                 {renderContent(post, index)}
-                {index === 0 && posts.length > 1 && <div className="icon-scroll" onClick={() => handlePageChange(1)}></div>}
+                {index === 0 && posts.length > 1 && (
+                  <div
+                    className="icon-scroll"
+                    onClick={() => handlePageChange(1)}
+                  ></div>
+                )}
               </div>
             ))}
           </ReactPageScroller>

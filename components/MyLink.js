@@ -89,6 +89,21 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
     title === "News" ||
     title?.toLowerCase().includes("мэдээ");
 
+  // Check if this is a HR/Career link
+  const isHRLink = title === "Хүний нөөц" || slug === "hr";
+
+  // Check if this is a FAQ link
+  const isFaqLink =
+    title === "Түгээмэл асуулт хариулт" || slug === "faq" || slug === "invites";
+
+  // Check if this is a Card order link
+  const isCardLink =
+    title === "Карт захиалах" || slug === "card" || slug === "feedback";
+
+  // Check if this is a logo link
+  const isLogoLink =
+    title === "Лого татах" || slug === "logo" || slug === "download-logo";
+
   return (
     <Link
       href={
@@ -98,33 +113,41 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
             ? generateLink(`/contact`)
             : isBranchesLink
               ? generateLink(`/branches`)
-              : isDownloadLogoLink
-                ? generateLink(`/download-logo`)
+              : isLogoLink
+                ? generateLink(`/logo`)
                 : isDownloadApplicationFormLink
                   ? generateLink(`/download-application-form`)
-                  : isAboutGroupLink
-                    ? generateLink(`/about-group`)
-                    : isNewCarVendorsLink
-                      ? generateLink(`/new-car-vendors`)
-                      : isNewCarLeasingLink
-                        ? generateLink(`/new-car-leasing`)
-                        : isMachineryLeasingLink
-                          ? generateLink(`/machinery-leasing`)
-                          : isManufacturingEquipmentLeasingLink
-                            ? generateLink(`/manufacturing-equipment-leasing`)
-                            : isMedicalEquipmentLeasingLink
-                              ? generateLink(`/medical-equipment-leasing`)
-                              : isNewsLink
-                                ? generateLink(`/news`)
-                                : type === "about"
-                                  ? generateLink(`/about`)
-                                  : type === "career"
-                                    ? generateLink(`/career/hr`)
-                                    : type === "career-detail"
-                                      ? generateLink(`/career/` + slug)
-                                      : type != "custom"
-                                        ? generateLink(`/${type}/[slug]`)
-                                        : url
+                  : isFaqLink
+                    ? generateLink(`/faq`)
+                    : isCardLink
+                      ? generateLink(`/card`)
+                      : isAboutGroupLink
+                        ? generateLink(`/about-group`)
+                        : isNewCarVendorsLink
+                          ? generateLink(`/new-car-vendors`)
+                          : isNewCarLeasingLink
+                            ? generateLink(`/new-car-leasing`)
+                            : isMachineryLeasingLink
+                              ? generateLink(`/machinery-leasing`)
+                              : isManufacturingEquipmentLeasingLink
+                                ? generateLink(
+                                    `/manufacturing-equipment-leasing`,
+                                  )
+                                : isMedicalEquipmentLeasingLink
+                                  ? generateLink(`/medical-equipment-leasing`)
+                                  : isNewsLink
+                                    ? generateLink(`/news`)
+                                    : isHRLink
+                                      ? generateLink(`/career/hr`)
+                                      : type === "about"
+                                        ? generateLink(`/about`)
+                                        : type === "career"
+                                          ? generateLink(`/career/hr`)
+                                          : type === "career-detail"
+                                            ? generateLink(`/career/` + slug)
+                                            : type != "custom"
+                                              ? generateLink(`/${type}/[slug]`)
+                                              : url
       }
       as={
         isHowToBecomeVendorLink
@@ -133,33 +156,41 @@ const MyLink = ({ className, icon, title, type, slug, url, prefetch }) => {
             ? generateLink(`/contact`)
             : isBranchesLink
               ? generateLink(`/branches`)
-              : isDownloadLogoLink
-                ? generateLink(`/download-logo`)
+              : isLogoLink
+                ? generateLink(`/logo`)
                 : isDownloadApplicationFormLink
                   ? generateLink(`/download-application-form`)
-                  : isAboutGroupLink
-                    ? generateLink(`/about-group`)
-                    : isNewCarVendorsLink
-                      ? generateLink(`/new-car-vendors`)
-                      : isNewCarLeasingLink
-                        ? generateLink(`/new-car-leasing`)
-                        : isMachineryLeasingLink
-                          ? generateLink(`/machinery-leasing`)
-                          : isManufacturingEquipmentLeasingLink
-                            ? generateLink(`/manufacturing-equipment-leasing`)
-                            : isMedicalEquipmentLeasingLink
-                              ? generateLink(`/medical-equipment-leasing`)
-                              : isNewsLink
-                                ? generateLink(`/news/`)
-                                : type === "about"
-                                  ? generateLink(`/about`)
-                                  : type === "career"
-                                    ? generateLink(`/career/hr`)
-                                    : type === "career-detail"
-                                      ? generateLink(`/career/` + slug)
-                                      : type != "custom"
-                                        ? generateLink(`/${type}/` + slug)
-                                        : url
+                  : isFaqLink
+                    ? generateLink(`/faq`)
+                    : isCardLink
+                      ? generateLink(`/card`)
+                      : isAboutGroupLink
+                        ? generateLink(`/about-group`)
+                        : isNewCarVendorsLink
+                          ? generateLink(`/new-car-vendors`)
+                          : isNewCarLeasingLink
+                            ? generateLink(`/new-car-leasing`)
+                            : isMachineryLeasingLink
+                              ? generateLink(`/machinery-leasing`)
+                              : isManufacturingEquipmentLeasingLink
+                                ? generateLink(
+                                    `/manufacturing-equipment-leasing`,
+                                  )
+                                : isMedicalEquipmentLeasingLink
+                                  ? generateLink(`/medical-equipment-leasing`)
+                                  : isNewsLink
+                                    ? generateLink(`/news/`)
+                                    : isHRLink
+                                      ? generateLink(`/career/hr`)
+                                      : type === "about"
+                                        ? generateLink(`/about`)
+                                        : type === "career"
+                                          ? generateLink(`/career/hr`)
+                                          : type === "career-detail"
+                                            ? generateLink(`/career/` + slug)
+                                            : type != "custom"
+                                              ? generateLink(`/${type}/` + slug)
+                                              : url
       }
       passHref
     >

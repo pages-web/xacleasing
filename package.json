@@ -13,7 +13,6 @@
     "@ant-design/icons": "^4.6.2",
     "@zeit/next-css": "^1.0.1",
     "antd": "^4.15.0",
-    "axios": "^0.21.1",
     "emailjs-com": "^2.6.4",
     "express": "^4.17.1",
     "google-map-react": "^2.1.9",
@@ -35,8 +34,7 @@
     "react-slick": "^0.28.1",
     "react-youtube": "^7.13.1",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^5.2.3",
-    "wpapi": "^1.2.1"
+    "styled-components": "^5.2.3"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^18.0.1",
