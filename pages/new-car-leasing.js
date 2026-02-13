@@ -70,7 +70,7 @@ const staticPostData = {
       first_value: "1.5",
       second_value: "1.9",
       gap: "0.1",
-      degree: "-10",
+      degree: "60",
     },
     period: { value: "8", degree: "210" },
     fee: "0.5",
