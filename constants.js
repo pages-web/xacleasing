@@ -12,3 +12,9 @@ export const productLabels = [
   { value: "Холбоо барих", label: "contact" },
   { value: "Хүсэлт авах хугацаа", label: "date" },
 ];
+
+// Create a lookup object for easier access
+export const productLabelsMap = productLabels.reduce((acc, item) => {
+  acc[item.label] = item.value;
+  return acc;
+}, {});

@@ -7,11 +7,23 @@ class ProductConditions extends React.Component {
   render() {
     const { post } = this.props;
 
-    if (!post || !post.acf || !post.acf.interest_rate || Object.keys(post.acf).length === 0) {
+    if (!post || !post.acf || Object.keys(post.acf).length === 0) {
       return null;
     }
 
     const { interest_rate, period, pre_payment } = post.acf || {};
+
+    // Debug: Log what data we have
+    console.log("ProductConditions - post.acf:", post.acf);
+    console.log("ProductConditions - interest_rate:", interest_rate);
+    console.log("ProductConditions - period:", period);
+    console.log("ProductConditions - pre_payment:", pre_payment);
+
+    // Only render if we have the required data
+    if (!interest_rate || !period || !pre_payment) {
+      console.log("ProductConditions - Missing required data, returning null");
+      return null;
+    }
     return (
       <div className="product-condition mt-2 mb-4">
         <Row justify="center">

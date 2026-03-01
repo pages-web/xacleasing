@@ -8,6 +8,7 @@ import MyLink from "../components/MyLink";
 import FooterBtn from "../components/FooterBtn";
 import SendEmail from "../components/SendEmail";
 import useTranslation from "next-translate/useTranslation";
+import { useGraphQL } from "../providers/ApolloProvider";
 
 import {
   ShareAltOutlined,
@@ -20,96 +21,220 @@ import {
   TwitterShareButton,
   LinkedinShareButton,
 } from "react-share";
+const GET_NEWS_POSTS = `
+  query PostList(
+    $clientPortalId: String!
+    $type: String
+    $featured: Boolean
+    $categoryIds: [String]
+    $searchValue: String
+    $status: PostStatus
+    $page: Int
+    $perPage: Int
+    $tagIds: [String]
+    $sortField: String
+    $sortDirection: String
+  ) {
+    cmsPostList(
+      clientPortalId: $clientPortalId
+      featured: $featured
+      type: $type
+      categoryIds: $categoryIds
+      searchValue: $searchValue
+      status: $status
+      page: $page
+      perPage: $perPage
+      tagIds: $tagIds
+      sortField: $sortField
+      sortDirection: $sortDirection
+    ) {
+      currentPage
+      totalCount
+      totalPages
+      posts {
+        _id
+        title
+        createdAt
+        updatedAt
+        status
+        excerpt
+        thumbnail {
+          url
+        }
+        content
+        customFieldsData
+      }
+    }
+  }
+`;
 
+const GET_POST_DETAIL = `
+  query Post($id: String) {
+    cmsPost(_id: $id) {
+      _id
+      title
+      content
+      excerpt
+      thumbnail {
+        url
+      }
+      featured_media
+      customFieldsData
+    }
+  }
+`;
 const { TabPane } = Tabs;
-
-// Static data for new car leasing
-const staticPostData = {
-  id: "new-car-leasing-static",
-  title: { rendered: "ШИНЭ АВТОМАШИНЫ ЛИЗИНГ" },
-  content: {
-    rendered: `
- Та албан ёсны борлуулагч байгууллагуудаас шинэ автомашин авахаар төлөвлөж байгаа бол бид хамгийн таатай нөхцөлтэй шуурхай, хялбар Лизингийн үйлчилгээ санал болгож байна .Эрхэм Та
-    `,
-  },
-  featured_media: "/images/logo.png",
-  date: "2024-01-01T00:00:00.000Z",
-  modified: "2024-01-01T00:00:00.000Z",
-  categories: [3],
-  template: "templates/template-cover.php",
-  acf: {
-    requirements: `
-      <ul class="uk-list uk-list-bullet tavigdah_show">
-        <li>Тухайн бизнесийн үйл ажиллагаагаа 12 сар эрхэлж буй.</li>
-        <li>Идэвхитэй хугацаа хэтэрсэн болон муу зээлийн түүхгүй байх.</li>
-        <li>Ашиг орлогоороо түрээсийн төлбөрийг бүрэн төлөх боломжтой байх.</li>
-      </ul>
-    `,
-    individuals: `
-      <ul class="uk-list uk-list-bullet burduuleh_show">
-        <li>Иргэний үнэмлэхний (ИҮ) хуулбар;</li>
-        <li>Орлого тодорхойлох баримтууд:
-          <ol class="uk-list uk-list-bullet burduuleh_show">
-            <li>Дансны хуулга;</li>
-            <li>Ажлын гэрээ;</li>
-            <li>Өөрийн машин механизмын гэрчилгээ.</li>
-          </ol>
-        </li>
-      </ul>
-    `,
-    legal_entities: `
-      <ul class="uk-list uk-list-bullet aan_show">
-        <li>ААН – ийн гэрчилгээ, дүрэм;</li>
-        <li>Гүйцэтгэх захирлын ИҮ-ний хуулбар;</li>
-        <li>Сүүлийн 2 жилийн санхүүгийн тайлан;</li>
-        <li>Эрх бүхий этгээдийн зөвшөөрөл;</li>
-        <li>Бизнесийн орлого тодорхойлох баримтууд.</li>
-      </ul>
-    `,
-    interest_rate: {
-      first_value: "1.5",
-      second_value: "1.9",
-      gap: "0.1",
-      degree: "60",
-    },
-    period: { value: "8", degree: "210" },
-    fee: "0.5",
-    header_img: "/product-detail/sinemash.jpg",
-    pre_payment: {
-      first_value: "10",
-      second_value: "20",
-      gap: "10",
-      degree: "2",
-    },
-    img: "/product-detail/sinemash.jpg",
-    footer_btn: { btn_text: "", btn_id: "", file: false },
-    labels: {
-      requirements: "Тавигдах шалгуур",
-      individuals: "Иргэн бүрдүүлэх материал",
-      legal_entities: "Байгууллагын бүрдүүлэх материал",
-      interest_rate: "Хүү (Сарын)",
-      period: "Хугацаа",
-      fee: "Үйлчилгээний шимтгэл",
-      header_img: "Толгой зураг",
-      pre_payment: "Урьдчилгаа",
-      img: "Том зураг",
-      lease_form: "Хүсэлт холбох",
-      footer_btn: "footer_btn",
-    },
-  },
-  _embedded: {
-    "wp:featuredmedia": [
-      {
-        source_url: "/images/logo.png",
-      },
-    ],
-  },
-};
 
 const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
   const { t } = useTranslation("common");
   const [width, setWidth] = useState(0);
-  const post = staticPostData;
+  const [newsPosts, setNewsPosts] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loadingNews, setLoadingNews] = useState(false);
+  const [post, setPost] = useState({
+    title: "",
+    content: "",
+    acf: {},
+    featured_media: null,
+  });
+  const { query } = useGraphQL();
+
+  const extractAcfFromCustomFieldsData = (customFieldsData) => {
+    if (!customFieldsData) {
+      return {};
+    }
+
+    if (
+      typeof customFieldsData === "object" &&
+      !Array.isArray(customFieldsData)
+    ) {
+      return customFieldsData;
+    }
+
+    if (!Array.isArray(customFieldsData)) {
+      return {};
+    }
+
+    return customFieldsData.reduce((acc, item) => {
+      if (!item || typeof item !== "object") {
+        return acc;
+      }
+
+      const key =
+        item.field ||
+        item.fieldId ||
+        item.fieldCode ||
+        item.key ||
+        item.name ||
+        item._id;
+      if (!key) {
+        return acc;
+      }
+
+      let value = item.value;
+
+      if (
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.prototype.hasOwnProperty.call(value, "value")
+      ) {
+        value = value.value;
+      }
+
+      if (typeof value === "string") {
+        try {
+          const parsed = JSON.parse(value);
+          value = parsed;
+        } catch (e) {
+          // keep string
+        }
+      }
+
+      acc[key] = value;
+      return acc;
+    }, {});
+  };
+
+  const staticPostData = async (
+    tagIds = ["2kOuXzr6TgXNth2M3eJzC"],
+    clientPortalId = "cp-wzk8M6gshwVUeGnfdR",
+  ) => {
+    setLoadingNews(true);
+    try {
+      const variables = {
+        tagIds,
+        clientPortalId,
+        type: "news",
+        page: 1,
+        perPage: 10,
+      };
+      const result = await query(GET_NEWS_POSTS, variables);
+      console.log("GraphQL result:", result);
+      if (result?.cmsPostList && result.cmsPostList.posts.length > 0) {
+        const firstPost = result.cmsPostList.posts[0];
+        console.log("First post data:", firstPost);
+
+        let detailedPost = firstPost;
+        if (firstPost?._id) {
+          try {
+            const detailResult = await query(GET_POST_DETAIL, {
+              id: firstPost._id,
+            });
+            if (detailResult?.cmsPost) {
+              detailedPost = detailResult.cmsPost;
+            }
+          } catch (e) {
+            console.error("Error fetching post detail:", e);
+          }
+        }
+
+        const derivedAcf = extractAcfFromCustomFieldsData(
+          detailedPost?.customFieldsData,
+        );
+
+        console.log("Derived ACF:", derivedAcf);
+        console.log("Derived ACF interest_rate:", derivedAcf?.interest_rate);
+        console.log("Derived ACF period:", derivedAcf?.period);
+        console.log("Derived ACF pre_payment:", derivedAcf?.pre_payment);
+
+        // Check if we have required fields, otherwise use fallback
+        const hasRequiredFields =
+          derivedAcf?.interest_rate &&
+          derivedAcf?.period &&
+          derivedAcf?.pre_payment;
+
+        setPost({
+          ...detailedPost,
+          acf: detailedPost?.acf || derivedAcf || {},
+          acf: {
+            interest_rate: {
+              first_value: "1.6",
+              second_value: "1.8",
+              gap: "0.1",
+              degree: "90",
+            },
+            period: { value: "4", degree: "90" },
+            pre_payment: { first_value: "20", gap: "10", degree: "35" },
+            fee: "0.5",
+            header_img: "/product-detail/sinemash.jpg",
+            ...derivedAcf, // Keep other fields from GraphQL
+          },
+        });
+        setNewsPosts(result.cmsPostList.posts || []);
+        setTotalCount(result.cmsPostList.totalCount || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching news:", error);
+      setNewsPosts([]);
+      setTotalCount(0);
+    } finally {
+      setLoadingNews(false);
+    }
+  };
+  useEffect(() => {
+    staticPostData();
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -178,19 +303,19 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
   const menu = (
     <Menu>
       <Menu.Item key="facebook">
-        <FacebookShareButton url={shareUrl} quote={post.title.rendered}>
+        <FacebookShareButton url={shareUrl} quote={post?.title || ""}>
           <FacebookFilled style={{ fontSize: "16px", marginRight: "8px" }} />
           Facebook
         </FacebookShareButton>
       </Menu.Item>
       <Menu.Item key="twitter">
-        <TwitterShareButton url={shareUrl} title={post.title.rendered}>
+        <TwitterShareButton url={shareUrl} title={post?.title || ""}>
           <TwitterOutlined style={{ fontSize: "16px", marginRight: "8px" }} />
           Twitter
         </TwitterShareButton>
       </Menu.Item>
       <Menu.Item key="linkedin">
-        <LinkedinShareButton url={shareUrl} title={post.title.rendered}>
+        <LinkedinShareButton url={shareUrl} title={post?.title || ""}>
           <LinkedinFilled style={{ fontSize: "16px", marginRight: "8px" }} />
           LinkedIn
         </LinkedinShareButton>
@@ -201,16 +326,17 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
   const renderContent = () => {
     return (
       <>
+        <Col span={20}>
+          <ProductConditions post={post} />
+        </Col>
         <Col xs={20} sm={20} lg={14}>
           <div
             align="center"
             className="my-2"
-            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+            dangerouslySetInnerHTML={{ __html: post?.content || "" }}
           />
         </Col>
-        <Col span={20}>
-          <ProductConditions post={post} />
-        </Col>
+
         <Col span={18} className="post-detail">
           {renderACF()}
         </Col>
@@ -222,9 +348,9 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
     return (
       <div className="d-flex justify-content-center">
         <SendEmail
-          subject={post.title.rendered}
-          content={post.content.rendered}
-          acf={post.acf}
+          subject={post?.title || ""}
+          content={post?.content || ""}
+          acf={post?.acf || {}}
         />
       </div>
     );
@@ -246,8 +372,8 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
   return (
     <Layout
       menu={mainMenu}
-      title={post.title.rendered}
-      image={post.acf.header_img || post.featured_media}
+      title={post?.title}
+      image={post?.acf?.header_img || post?.featured_media}
       stickyMenu={stickyMenu}
     >
       <div className="content-wrapper">
@@ -258,16 +384,29 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
                 <Row justify="center pt-2">
                   <Col span={22}>
                     <h2 className="title my-2 pl-2 upper-case">
-                      {post.title.rendered}
+                      {post?.title}
                     </h2>
-                    {post.acf.header_img && (
-                      <img
-                        className="w-100 p-1"
-                        src={post.acf.header_img}
-                        alt={post.title.rendered}
-                      />
-                    )}
+                    <img
+                      className="w-100 p-1"
+                      style={{
+                        maxHeight: "400px",
+                        objectFit: "cover",
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                      }}
+                      src={
+                        post?.thumbnail?.url
+                          ? `https://xacleasing.app.erxes.io/gateway/read-file?key=${post?.thumbnail?.url}`
+                          : "/product-detail/sinemash.jpg"
+                      }
+                      alt={post?.title || "Шинэ автомашины лизинг"}
+                    />
                   </Col>
+                  <div className="ant-col ant-col-xs-20 ant-col-sm-20 ant-col-lg-14">
+                    <div align="center" className="my-2">
+                      {post?.excerpt}
+                    </div>
+                  </div>
                   {renderContent()}
                 </Row>
                 {renderEmail()}
@@ -283,7 +422,7 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
               </Row>
             </Col>
             <Col xs={22} sm={12} md={7} lg={6} xl={4}>
-              {post.acf.lease_form && (
+              {post?.acf?.lease_form && (
                 <FooterBtn
                   btn={"Түрээсийн хүсэлт илгээх"}
                   url={post.acf.lease_form}
