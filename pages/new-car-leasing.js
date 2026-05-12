@@ -209,13 +209,13 @@ const NewCarLeasing = ({ mainMenu, stickyMenu }) => {
           acf: detailedPost?.acf || derivedAcf || {},
           acf: {
             interest_rate: {
-              first_value: "1.6",
+              first_value: "1.5",
               second_value: "1.8",
               gap: "0.1",
-              degree: "90",
+              degree: "60",
             },
-            period: { value: "4", degree: "90" },
-            pre_payment: { first_value: "20", gap: "10", degree: "35" },
+            period: { value: "8", degree: "210" },
+            pre_payment: { first_value: "10", gap: "10", degree: "1" },
             fee: "0.5",
             header_img: "/product-detail/sinemash.jpg",
             ...derivedAcf, // Keep other fields from GraphQL
