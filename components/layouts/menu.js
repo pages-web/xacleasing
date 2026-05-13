@@ -421,7 +421,7 @@ class MenuComponent extends React.Component {
                   href="tel:+97670112061"
                   className="telephone"
                 >
-                  <PhoneOutlined /> +976 7011-2061
+                  <PhoneOutlined /> +976 18001888, 75771888
                 </a>
                 {/* <a key="login" href="https://e-leasing.mn/" target="_blank" className="login-btn">
                   {__("Нэвтрэх")}

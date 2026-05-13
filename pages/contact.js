@@ -101,7 +101,7 @@ const ContactPage = ({ loading, mainMenu, stickyMenu }) => {
                       <ul className="list-style-none contact-info">
                         <li>
                           <span>{__("УТАС") + ":"}</span>
-                          <a href="tel:7011-2061">
+                          <a href="tel:18001888, 75771888">
                             <p>{posts[0]?.customFieldsData?.[0]?.value}</p>
                           </a>
                         </li>

@@ -5,14 +5,21 @@ import { __ } from "../utils";
 
 const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
   return (
-    <Layout loading={loading} title={__("Группын тухай")} menu={mainMenu} stickyMenu={stickyMenu}>
+    <Layout
+      loading={loading}
+      title={__("Группын тухай")}
+      menu={mainMenu}
+      stickyMenu={stickyMenu}
+    >
       <div className="content-wrapper">
         <div className="w-100 page-wrapper transparent">
           <Row justify="center" className="h-100">
             <Col xs={22} sm={22} md={20} lg={18} xl={16} className="h-100">
               <div className="page-wrapper-content h-100">
                 <div className="page-wrapper p-3 w-100">
-                  <h2 className="mb-2 upper-case title">{__("Группын тухай")}</h2>
+                  <h2 className="mb-2 upper-case title">
+                    {__("Группын тухай")}
+                  </h2>
 
                   {/* Company Mission */}
                   <Row gutter={32} className="mt-4">
@@ -20,12 +27,15 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                       <div className="box w-100">
                         <h3>Бидний эрхэм зорилго</h3>
                         <p>
-                          ХасЛизинг компани нь Лизингийн үйлчилгээг дагнан эрхлэх зорилгоор 2007 онд ТэнГэр Санхүүгийн Нэгдэл ХХК-ийн хөрөнгө
-                          оруулалтаар үүсгэн байгуулагдсан салбартаа тэргүүлэгч лизингийн мэргэшсэн компани юм.
+                          ХасЛизинг компани нь Лизингийн үйлчилгээг дагнан
+                          эрхлэх зорилгоор 2007 онд ТэнГэр Санхүүгийн Нэгдэл
+                          ХХК-ийн хөрөнгө оруулалтаар үүсгэн байгуулагдсан
+                          салбартаа тэргүүлэгч лизингийн мэргэшсэн компани юм.
                         </p>
                         <p>
-                          Бид харилцагчиддаа чанартай, найдвартай санхүүгийн шийдэл санал болгож, Монгол Улсын эдийн засгийн хөгжилд хувь нэмрээ
-                          оруулж байна.
+                          Бид харилцагчиддаа чанартай, найдвартай санхүүгийн
+                          шийдэл санал болгож, Монгол Улсын эдийн засгийн
+                          хөгжилд хувь нэмрээ оруулж байна.
                         </p>
                       </div>
                     </Col>
@@ -34,16 +44,21 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                         <h3>Үнэт зүйлс</h3>
                         <ul>
                           <li>
-                            <strong>Найдвартай байдал</strong> - Харилцагчидтайгаа урт хугацааны найдвартай харилцаа тогтооно
+                            <strong>Найдвартай байдал</strong> -
+                            Харилцагчидтайгаа урт хугацааны найдвартай харилцаа
+                            тогтооно
                           </li>
                           <li>
-                            <strong>Мэргэжлийн ур чадвар</strong> - Лизингийн салбарт мэргэшсэн баг
+                            <strong>Мэргэжлийн ур чадвар</strong> - Лизингийн
+                            салбарт мэргэшсэн баг
                           </li>
                           <li>
-                            <strong>Шуурхай үйлчилгээ</strong> - Хурдан, чанартай шийдэл санал болгоно
+                            <strong>Шуурхай үйлчилгээ</strong> - Хурдан,
+                            чанартай шийдэл санал болгоно
                           </li>
                           <li>
-                            <strong>Нээлттэй байдал</strong> - Ил тод, хариуцлагатай үйл ажиллагаа
+                            <strong>Нээлттэй байдал</strong> - Ил тод,
+                            хариуцлагатай үйл ажиллагаа
                           </li>
                         </ul>
                       </div>
@@ -57,7 +72,9 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                         <h3>Удирдлагын баг</h3>
                         <Row gutter={24}>
                           <Col xs={24} sm={12} md={8}>
-                            <div style={{ textAlign: "center", padding: "20px" }}>
+                            <div
+                              style={{ textAlign: "center", padding: "20px" }}
+                            >
                               <div
                                 style={{
                                   width: "80px",
@@ -74,11 +91,16 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                                 👨‍💼
                               </div>
                               <h4>Гүйцэтгэх захирал</h4>
-                              <p style={{ fontSize: "12px" }}>20+ жилийн туршлагатай санхүү, лизингийн салбарын мэргэжилтэн</p>
+                              <p style={{ fontSize: "12px" }}>
+                                20+ жилийн туршлагатай санхүү, лизингийн
+                                салбарын мэргэжилтэн
+                              </p>
                             </div>
                           </Col>
                           <Col xs={24} sm={12} md={8}>
-                            <div style={{ textAlign: "center", padding: "20px" }}>
+                            <div
+                              style={{ textAlign: "center", padding: "20px" }}
+                            >
                               <div
                                 style={{
                                   width: "80px",
@@ -95,11 +117,16 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                                 👩‍💼
                               </div>
                               <h4>Санхүү хариуцсан захирал</h4>
-                              <p style={{ fontSize: "12px" }}>Санхүүгийн удирдлага, эрсдэлийн менежментийн чиглэлээр мэргэшсэн</p>
+                              <p style={{ fontSize: "12px" }}>
+                                Санхүүгийн удирдлага, эрсдэлийн менежментийн
+                                чиглэлээр мэргэшсэн
+                              </p>
                             </div>
                           </Col>
                           <Col xs={24} sm={12} md={8}>
-                            <div style={{ textAlign: "center", padding: "20px" }}>
+                            <div
+                              style={{ textAlign: "center", padding: "20px" }}
+                            >
                               <div
                                 style={{
                                   width: "80px",
@@ -116,7 +143,10 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                                 👨‍💻
                               </div>
                               <h4>Үйл ажиллагаа хариуцсан захирал</h4>
-                              <p style={{ fontSize: "12px" }}>Үйл ажиллагаа, процессын сайжруулалтын чиглэлээр мэргэшсэн</p>
+                              <p style={{ fontSize: "12px" }}>
+                                Үйл ажиллагаа, процессын сайжруулалтын чиглэлээр
+                                мэргэшсэн
+                              </p>
                             </div>
                           </Col>
                         </Row>
@@ -162,7 +192,7 @@ const AboutGroupPage = ({ loading, mainMenu, stickyMenu }) => {
                             <p>
                               <strong>Утас:</strong>
                             </p>
-                            <p>7011-2061</p>
+                            <p>18001888, 75771888</p>
                           </Col>
                           <Col xs={24} sm={8}>
                             <p>
