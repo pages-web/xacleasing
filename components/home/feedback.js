@@ -3,7 +3,6 @@ import { Button, Input, Form, notification, Select } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import emailjs from "emailjs-com";
 import useTranslation from "next-translate/useTranslation";
-import { useGraphQL } from "../../providers/ApolloProvider";
 
 const { Option } = Select;
 
@@ -13,31 +12,8 @@ const openNotificationWithIcon = (type, msg) => {
   });
 };
 
-const WIDGETS_SAVE_LEAD = `
-  mutation widgetsSaveLead($formId: String!, $submissions: [FieldValueInput], $browserInfo: JSON!, $cachedCustomerId: String) {
-    widgetsSaveLead(
-      formId: $formId
-      submissions: $submissions
-      browserInfo: $browserInfo
-      cachedCustomerId: $cachedCustomerId
-    ) {
-      status
-      conversationId
-      customerId
-      errors {
-        fieldId
-        code
-        text
-        __typename
-      }
-      __typename
-    }
-  }
-`;
-
 const Feedback = () => {
   const { t } = useTranslation("common");
-  const { mutate } = useGraphQL();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -51,87 +27,19 @@ const Feedback = () => {
     setLoading(true);
 
     try {
-      const submissions = [
-        {
-          _id: "dvEwO18OPB3A7yLtYjJ91",
-          type: "input",
-          value: String(name),
-        },
-        {
-          _id: "dvEwO18OPB3A7yLtYjJ91",
-          type: "input",
-          value: String(email),
-        },
-        {
-          _id: "dvEwO18OPB3A7yLtYjJ91",
-          type: "input",
-          value: String(mobile),
-        },
-        {
-          _id: "dvEwO18OPB3A7yLtYjJ91",
-          type: "select",
-          value: String(topic === "complaint" ? t("Гомдол") : t("Санал хүсэлт")),
-        },
-        {
-          _id: "dvEwO18OPB3A7yLtYjJ91",
-          type: "textarea",
-          value: String(message),
-        },
-      ];
-
-      const browserInfo = {
-        language: navigator.language,
-        userAgent: navigator.userAgent,
-        url: window.location.href,
-        timestamp: new Date().toISOString(),
+      const templateParams = {
+        email,
+        name,
+        message,
+        mobile,
+        topic: topic === "complaint" ? t("Гомдол") : t("Санал хүсэлт"),
       };
 
-      console.log("Sending GraphQL mutation with:", {
-        formId: "dvEwO18OPB3A7yLtYjJ91",
-        submissions,
-        browserInfo,
-        cachedCustomerId: "5uoY53QC9Pwmrsq2W",
-      });
-
-      const response = await mutate(WIDGETS_SAVE_LEAD, {
-        formId: "dvEwO18OPB3A7yLtYjJ91",
-        submissions,
-        browserInfo,
-        cachedCustomerId: "5uoY53QC9Pwmrsq2W",
-      });
-
-      console.log("GraphQL response:", response);
-
-      if (response.widgetsSaveLead.status === "ok") {
-        openNotificationWithIcon("success", t("Амжилттай илгээлээ"));
-        form.resetFields();
-      } else {
-        const errors = response.widgetsSaveLead.errors;
-        if (errors && errors.length > 0) {
-          openNotificationWithIcon("error", `${t("Алдаа")}: ${errors[0].text}`);
-        } else {
-          openNotificationWithIcon("error", t("Амжилтгүй боллоо"));
-        }
-      }
+      await emailjs.send("gmail", "feedback", templateParams, "user_FpxzyiXNUL7JAEqalfg2g");
+      openNotificationWithIcon("success", t("Амжилттай илгээлээ"));
+      form.resetFields();
     } catch (error) {
-      console.error("GraphQL mutation error:", error);
-
-      // Fallback to email.js if GraphQL fails
-      try {
-        const templateParams = {
-          email,
-          name,
-          message,
-          mobile,
-          topic: topic === "complaint" ? t("Гомдол") : t("Санал хүсэлт"),
-        };
-
-        await emailjs.send("gmail", "feedback", templateParams, "user_FpxzyiXNUL7JAEqalfg2g");
-        openNotificationWithIcon("success", t("Амжилттай илгээлээ (email)"));
-        form.resetFields();
-      } catch (emailError) {
-        openNotificationWithIcon("error", t("Амжилтгүй боллоо"));
-      }
+      openNotificationWithIcon("error", t("Амжилтгүй боллоо"));
     } finally {
       setLoading(false);
     }

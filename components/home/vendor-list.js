@@ -1,79 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Col, Menu, Modal, Row } from "antd";
 import { getData, regex } from "../../utils";
 import Slider from "react-slick";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import useTranslation from "next-translate/useTranslation";
-import { useGraphQL } from "../../providers/ApolloProvider";
-
-const GET_VENDORS = `
-query PostsList(
-    $clientPortalId: String!
-    $tagIds: [String]
-    $categoryIds: [String]
-    $page: Int
-    $perPage: Int
-  ) {
-    cmsPostList(
-      clientPortalId: $clientPortalId
-      tagIds: $tagIds
-      categoryIds: $categoryIds
-      page: $page
-      perPage: $perPage
-    ) {
-      posts {
-        _id
-        title
-        excerpt
-        thumbnail {
-          url
-        }
-        images {
-          url
-        }
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
+import { getPosts } from "../../data/cms";
 
 function VendorList(props) {
   const { t } = useTranslation("common");
-  const { query } = useGraphQL();
   const [active, setActive] = useState(4);
   const [activeName, setActiveName] = useState("Бүгд");
-  const [graphqlVendors, setGraphqlVendors] = useState([]);
-  const [vendorsLoading, setVendorsLoading] = useState(false);
+  const vendors = getPosts("vendors");
   const [visible, setVisible] = useState(false);
   const [modalPost, setModalPost] = useState({});
-
-  // Fetch vendors using GraphQL
-  const fetchVendorsWithGraphQL = async () => {
-    setVendorsLoading(true);
-    try {
-      const variables = {
-        clientPortalId: process.env.NEXT_PUBLIC_ERXES_CLIENT_PORTAL_ID || "cp-wzk8M6gshwVUeGnfdR",
-        tagIds: ["yPfazYFeIaYr1OY5mhUxH"],
-        page: 1,
-        perPage: 100,
-      };
-
-      const result = await query(GET_VENDORS, variables);
-
-      if (result?.cmsPostList?.posts) {
-        setGraphqlVendors(result.cmsPostList.posts);
-      }
-    } catch (error) {
-      console.error("Error fetching vendors:", error);
-    } finally {
-      setVendorsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchVendorsWithGraphQL();
-  }, []);
 
   // Function to get category ID based on excerpt
   const getCategoryFromExcerpt = (excerpt) => {
@@ -89,8 +28,8 @@ function VendorList(props) {
     }
   };
 
-  // Transform GraphQL data to match existing component structure
-  const transformedVendorPosts = graphqlVendors.map((vendor) => {
+  // Transform CMS data to match existing component structure
+  const transformedVendorPosts = vendors.map((vendor) => {
     const categoryId = getCategoryFromExcerpt(vendor.excerpt);
     return {
       id: vendor._id,
@@ -103,9 +42,7 @@ function VendorList(props) {
         ? {
             "wp:featuredmedia": [
               {
-                source_url: vendor.thumbnail.url.startsWith("http")
-                  ? vendor.thumbnail.url
-                  : `https://xacleasing.app.erxes.io/gateway/read-file?key=${vendor.thumbnail.url}`,
+                source_url: vendor.thumbnail.url,
               },
             ],
           }
@@ -114,7 +51,7 @@ function VendorList(props) {
   });
 
   const renderData = () => {
-    // Use GraphQL data if available, otherwise fallback to props
+    // Use CMS data if available, otherwise fallback to props
     const vendorData = transformedVendorPosts.length > 0 ? transformedVendorPosts : props.vendorPosts || [];
 
     if (Number(active) === 4) return vendorData;
@@ -340,11 +277,7 @@ function VendorList(props) {
           </Menu>
         </Col>
         <Col xs={24} sm={14} lg={16} className="vendorlist">
-          {vendorsLoading ? (
-            <div className="loading" style={{ textAlign: "center", padding: "40px" }}>
-              {t("Өгөгдөл ачааллаж байна...")}
-            </div>
-          ) : dataLength > 0 ? (
+          {dataLength > 0 ? (
             <Slider className="vendor-slider" {...settings}>
               {renderData().map((post, index) => renderPostItem(post, index))}
             </Slider>

@@ -1,97 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Col, Row } from "antd";
 import { Pagination } from "react-bootstrap";
 import Layout from "../components/layouts/Layout";
 import ReactPageScroller from "../components/react-page-scroller";
 import { __ } from "../utils";
-import { useGraphQL } from "../providers/ApolloProvider";
-
-const GET_ABOUT_POSTS = `
-query PostList(
-    $clientPortalId: String!
-    $type: String
-    $featured: Boolean
-    $categoryIds: [String]
-    $searchValue: String
-    $status: PostStatus
-    $page: Int
-    $perPage: Int
-    $tagIds: [String]
-    $sortField: String
-    $sortDirection: String
-  ) {
-    cmsPostList(
-      clientPortalId: $clientPortalId
-      featured: $featured
-      type: $type
-      categoryIds: $categoryIds
-      searchValue: $searchValue
-      status: $status
-      page: $page
-      perPage: $perPage
-      tagIds: $tagIds
-      sortField: $sortField
-      sortDirection: $sortDirection
-    ) {
-      currentPage
-      totalCount
-      totalPages
-      posts {
-        _id
-        title
-        createdAt
-        updatedAt
-        status
-        thumbnail {
-          url
-        }
-        content
-      }
-    }
-  }
-`;
+import { getPosts } from "../data/cms";
 
 const About = ({ mainMenu, stickyMenu }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [data, setData] = useState(null);
-  const { query } = useGraphQL();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await query(GET_ABOUT_POSTS, {
-          clientPortalId: "cp-wzk8M6gshwVUeGnfdR",
-          page: 1,
-          tagIds: ["MsHbm3T4hX-Xg3mF5AiMO"],
-          perPage: 20,
-        });
-
-        if (result && result.cmsPostList) {
-          setData(result.cmsPostList);
-          console.log("Fetched data from GraphQL:", result.cmsPostList);
-        } else {
-          throw new Error("No data received from GraphQL query");
-        }
-      } catch (err) {
-        console.error("GraphQL Error:", err);
-        setError("Failed to load data from GraphQL");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (query) {
-      fetchData();
-    }
-  }, [query]);
+  const posts = getPosts("about");
 
   const handlePageChange = (pageNumber) => {
-    const posts = data?.posts || [];
     if (pageNumber >= 0 && pageNumber < Math.min(posts.length, 2)) {
       setCurrentPage(pageNumber);
     }
@@ -111,9 +30,7 @@ const About = ({ mainMenu, stickyMenu }) => {
       typeof window !== "undefined" &&
       window.innerWidth > 480
     ) {
-      const imageUrl = post?.thumbnail?.url
-        ? `https://xacleasing.app.erxes.io/gateway/read-file?key=${post.thumbnail.url}`
-        : "/images/logo.png"; // Fallback to existing logo
+      const imageUrl = post?.thumbnail?.url || "/images/logo.png";
 
       return (
         <img
@@ -166,7 +83,6 @@ const About = ({ mainMenu, stickyMenu }) => {
   };
 
   const getPagesNumbers = () => {
-    const posts = data?.posts || [];
     const pageNumbers = [];
 
     for (let i = 0; i < Math.min(posts.length, 2); i++) {
@@ -182,44 +98,9 @@ const About = ({ mainMenu, stickyMenu }) => {
     return pageNumbers;
   };
 
-  const posts = data?.posts || [];
-
   return (
     <Layout title={__("Бидний тухай")} menu={mainMenu} stickyMenu={stickyMenu}>
-      {loading && (
-        <div
-          className="loading-container"
-          style={{ textAlign: "center", padding: "50px" }}
-        >
-          <div>{__("Уншиж байна...")} ⏳</div>
-        </div>
-      )}
-
-      {error && (
-        <div
-          className="error-container"
-          style={{ textAlign: "center", padding: "50px", color: "red" }}
-        >
-          <div>
-            {__("Алдаа гарлаа")}: {error}
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              marginTop: "10px",
-              padding: "10px 20px",
-              background: "#1890ff",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-            }}
-          >
-            {__("Дахин оролдох")}
-          </button>
-        </div>
-      )}
-
-      {!loading && !error && posts.length === 0 && (
+      {posts.length === 0 && (
         <div
           className="no-content"
           style={{ textAlign: "center", padding: "50px" }}
@@ -228,7 +109,7 @@ const About = ({ mainMenu, stickyMenu }) => {
         </div>
       )}
 
-      {!loading && !error && posts.length > 0 && (
+      {posts.length > 0 && (
         <>
           <ReactPageScroller
             pageOnChange={handlePageChange}

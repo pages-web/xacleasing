@@ -45,7 +45,10 @@ class GoogleMapComponent extends React.Component {
         if (!items || items.length === 0) {
             return null
         }
-        return items.map(item => this.renderMarker(item));
+        // Координатгүй салбарыг map дээр тэмдэглэх боломжгүй
+        return items
+            .filter(item => item.acf && item.acf.lat && item.acf.lon)
+            .map(item => this.renderMarker(item));
     }
 
     render() {

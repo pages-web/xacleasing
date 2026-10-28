@@ -1,85 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Layout from "../components/layouts/Layout";
 import { Col, Row } from "antd";
 import Contact from "../components/home/contact";
 import { __ } from "../utils";
 import Feedback from "../components/home/feedback";
-import { useGraphQL } from "../providers/ApolloProvider";
-
-const GET_POSTS = `
-  query PostList(
-    $clientPortalId: String!
-    $type: String
-    $featured: Boolean
-    $categoryIds: [String]
-    $searchValue: String
-    $status: PostStatus
-    $page: Int
-    $perPage: Int
-    $tagIds: [String]
-    $sortField: String
-    $sortDirection: String
-  ) {
-    cmsPostList(
-      clientPortalId: $clientPortalId
-      featured: $featured
-      type: $type
-      categoryIds: $categoryIds
-      searchValue: $searchValue
-      status: $status
-      page: $page
-      perPage: $perPage
-      tagIds: $tagIds
-      sortField: $sortField
-      sortDirection: $sortDirection
-    ) {
-      currentPage
-      totalCount
-      totalPages
-      posts {
-        _id
-        title
-        createdAt
-        updatedAt
-        status
-        excerpt
-        thumbnail {
-          url
-        }
-        content
-        customFieldsData
-      }
-    }
-  }
-`;
+import { getPosts } from "../data/cms";
 
 const ContactPage = ({ loading, mainMenu, stickyMenu }) => {
-  const { query } = useGraphQL();
-  const [posts, setPosts] = useState([]);
-  const [loadingPosts, setLoadingPosts] = useState(false);
+  const [contact] = getPosts("contact");
+  const contactFields = contact?.customFieldsData || [];
 
-  const fetchPosts = async (clientPortalId = "cp-wzk8M6gshwVUeGnfdR") => {
-    setLoadingPosts(true);
-    try {
-      const variables = {
-        clientPortalId,
-        categoryIds: ["L2-VehLOjQ1UbprLUFJAU"],
-      };
-      const result = await query(GET_POSTS, variables);
-      if (result?.cmsPostList) {
-        setPosts(result.cmsPostList.posts || []);
-      }
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      setPosts([]);
-    } finally {
-      setLoadingPosts(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
   return (
     <Layout
       loading={loading}
@@ -102,18 +32,18 @@ const ContactPage = ({ loading, mainMenu, stickyMenu }) => {
                         <li>
                           <span>{__("УТАС") + ":"}</span>
                           <a href="tel:18001888, 75771888">
-                            <p>{posts[0]?.customFieldsData?.[0]?.value}</p>
+                            <p>{contactFields[0]?.value}</p>
                           </a>
                         </li>
                         <li>
                           <span>{__("ХАЯГ") + ":"}</span>
-                          <p>{posts[0]?.customFieldsData?.[2]?.value}</p>
+                          <p>{contactFields[2]?.value}</p>
                         </li>
                         <li>
                           <span>{__("ЦАХИМ ШУУДАН") + ":"}</span>
                           <p>
                             <a href="mailto:info@xacleasing.mn">
-                              {posts[0]?.customFieldsData?.[1]?.value}
+                              {contactFields[1]?.value}
                             </a>
                           </p>
                         </li>

@@ -8,7 +8,6 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import { setLocale } from "../utils";
 import { getLang } from "../config";
-import { Providers } from "../providers/index";
 
 Router.events.on("routeChangeStart", () => {
   NProgress.start();
@@ -50,14 +49,12 @@ function MyApp({ Component, pageProps, lang, mainMenu, stickyMenu }) {
   }
 
   return (
-    <Providers>
-      <Component
-        {...pageProps}
-        mainMenu={mainMenu}
-        stickyMenu={stickyMenu?.items || []}
-        loading={loading}
-      />
-    </Providers>
+    <Component
+      {...pageProps}
+      mainMenu={mainMenu}
+      stickyMenu={stickyMenu?.items || []}
+      loading={loading}
+    />
   );
 }
 

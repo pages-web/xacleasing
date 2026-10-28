@@ -8,7 +8,7 @@ import MyLink from "../components/MyLink";
 import FooterBtn from "../components/FooterBtn";
 import SendEmail from "../components/SendEmail";
 import useTranslation from "next-translate/useTranslation";
-import { useGraphQL } from "../providers/ApolloProvider";
+import { getPosts } from "../data/cms";
 
 import {
   ShareAltOutlined,
@@ -22,220 +22,28 @@ import {
   TwitterShareButton,
   LinkedinShareButton,
 } from "react-share";
-const GET_NEWS_POSTS = `
-  query PostList(
-    $clientPortalId: String!
-    $type: String
-    $featured: Boolean
-    $categoryIds: [String]
-    $searchValue: String
-    $status: PostStatus
-    $page: Int
-    $perPage: Int
-    $tagIds: [String]
-    $sortField: String
-    $sortDirection: String
-  ) {
-    cmsPostList(
-      clientPortalId: $clientPortalId
-      featured: $featured
-      type: $type
-      categoryIds: $categoryIds
-      searchValue: $searchValue
-      status: $status
-      page: $page
-      perPage: $perPage
-      tagIds: $tagIds
-      sortField: $sortField
-      sortDirection: $sortDirection
-    ) {
-      currentPage
-      totalCount
-      totalPages
-      posts {
-        _id
-        title
-        createdAt
-        updatedAt
-        status
-        excerpt
-        thumbnail {
-          url
-        }
-        content
-        customFieldsData
-      }
-    }
-  }
-`;
-
-const GET_POST_DETAIL = `
-  query Post($id: String) {
-    cmsPost(_id: $id) {
-      _id
-      title
-      content
-      excerpt
-      thumbnail {
-        url
-      }
-      featured_media
-      customFieldsData
-    }
-  }
-`;
 const { TabPane } = Tabs;
 
 const ManufacturingEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
   const { t } = useTranslation("common");
   const [width, setWidth] = useState(0);
-  const [newsPosts, setNewsPosts] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loadingNews, setLoadingNews] = useState(false);
-  const [post, setPost] = useState({
-    title: "",
-    content: "",
-    acf: {},
-    featured_media: null,
-  });
-  const { query } = useGraphQL();
-
-  const extractAcfFromCustomFieldsData = (customFieldsData) => {
-    if (!customFieldsData) {
-      return {};
-    }
-
-    if (
-      typeof customFieldsData === "object" &&
-      !Array.isArray(customFieldsData)
-    ) {
-      return customFieldsData;
-    }
-
-    if (!Array.isArray(customFieldsData)) {
-      return {};
-    }
-
-    return customFieldsData.reduce((acc, item) => {
-      if (!item || typeof item !== "object") {
-        return acc;
-      }
-
-      const key =
-        item.field ||
-        item.fieldId ||
-        item.fieldCode ||
-        item.key ||
-        item.name ||
-        item._id;
-      if (!key) {
-        return acc;
-      }
-
-      let value = item.value;
-
-      if (
-        value &&
-        typeof value === "object" &&
-        !Array.isArray(value) &&
-        Object.prototype.hasOwnProperty.call(value, "value")
-      ) {
-        value = value.value;
-      }
-
-      if (typeof value === "string") {
-        try {
-          const parsed = JSON.parse(value);
-          value = parsed;
-        } catch (e) {
-          // keep string
-        }
-      }
-
-      acc[key] = value;
-      return acc;
-    }, {});
+  const [cmsPost] = getPosts("manufacturing");
+  const post = {
+    ...cmsPost,
+    acf: {
+      interest_rate: {
+        first_value: "1.6",
+        second_value: "1.8",
+        gap: "0.1",
+        degree: "90",
+      },
+      period: { value: "4", degree: "90" },
+      pre_payment: { first_value: "20", gap: "10", degree: "35" },
+      fee: "0.5",
+      header_img: "/product-detail/uildver.jpg",
+      lease_form: "lease-app-manufacturing-equipment",
+    },
   };
-
-  const staticPostData = async (
-    tagIds = ["BKMP5v7WABWOZleGDUvnN"],
-    clientPortalId = "cp-wzk8M6gshwVUeGnfdR",
-  ) => {
-    setLoadingNews(true);
-    try {
-      const variables = {
-        tagIds,
-        clientPortalId,
-        type: "news",
-        page: 1,
-        perPage: 10,
-      };
-      const result = await query(GET_NEWS_POSTS, variables);
-      console.log("GraphQL result:", result);
-      if (result?.cmsPostList && result.cmsPostList.posts.length > 0) {
-        const firstPost = result.cmsPostList.posts[0];
-        console.log("First post data:", firstPost);
-
-        let detailedPost = firstPost;
-        if (firstPost?._id) {
-          try {
-            const detailResult = await query(GET_POST_DETAIL, {
-              id: firstPost._id,
-            });
-            if (detailResult?.cmsPost) {
-              detailedPost = detailResult.cmsPost;
-            }
-          } catch (e) {
-            console.error("Error fetching post detail:", e);
-          }
-        }
-
-        const derivedAcf = extractAcfFromCustomFieldsData(
-          detailedPost?.customFieldsData,
-        );
-
-        console.log("Derived ACF:", derivedAcf);
-        console.log("Derived ACF interest_rate:", derivedAcf?.interest_rate);
-        console.log("Derived ACF period:", derivedAcf?.period);
-        console.log("Derived ACF pre_payment:", derivedAcf?.pre_payment);
-
-        const hasRequiredFields =
-          derivedAcf?.interest_rate &&
-          derivedAcf?.period &&
-          derivedAcf?.pre_payment;
-
-        setPost({
-          ...detailedPost,
-          acf: detailedPost?.acf || derivedAcf || {},
-          acf: {
-            interest_rate: {
-              first_value: "1.6",
-              second_value: "1.8",
-              gap: "0.1",
-              degree: "90",
-            },
-            period: { value: "4", degree: "90" },
-            pre_payment: { first_value: "20", gap: "10", degree: "35" },
-            fee: "0.5",
-            header_img: "/product-detail/uildver.jpg",
-            lease_form: "lease-app-manufacturing-equipment",
-            ...derivedAcf, // Keep other fields from GraphQL
-          },
-        });
-        setNewsPosts(result.cmsPostList.posts || []);
-        setTotalCount(result.cmsPostList.totalCount || 0);
-      }
-    } catch (error) {
-      console.error("Error fetching news:", error);
-      setNewsPosts([]);
-      setTotalCount(0);
-    } finally {
-      setLoadingNews(false);
-    }
-  };
-  useEffect(() => {
-    staticPostData();
-  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -292,11 +100,6 @@ const ManufacturingEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
   const renderProductTable = () => {
     const { acf } = post;
     if (!acf) return null;
-
-    console.log("ACF data:", acf);
-    console.log("Interest rate:", acf?.interest_rate);
-    console.log("Period:", acf?.period);
-    console.log("Pre payment:", acf?.pre_payment);
 
     return <ProductConditions post={post} />;
   };
@@ -391,7 +194,7 @@ const ManufacturingEquipmentLeasing = ({ mainMenu, stickyMenu }) => {
                     </h2>
                     <img
                       className="w-100 p-1"
-                      src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${post?.thumbnail?.url}`}
+                      src={post?.thumbnail?.url || ""}
                       alt={post?.title}
                     />
                   </Col>

@@ -10,22 +10,11 @@ import {
 } from "@ant-design/icons";
 import useTranslation from "next-translate/useTranslation";
 
-const Contact = ({
-  branchList,
-  graphqlBranches = null,
-  graphqlLoading = false,
-  graphqlError = null,
-}) => {
+const Contact = ({ branchList, branches = [] }) => {
   const { t } = useTranslation("common");
 
-  console.log("GraphQL branches:", graphqlBranches);
-
   const renderBranch = (branch) => {
-    console.log("Branch:", branch);
     const branchTitle = branch.title?.rendered || branch.title || "";
-
-    const customData = branch.customFieldsData || {};
-    const acfData = branch.acf || {};
 
     const customFields = Array.isArray(branch.customFieldsData)
       ? branch.customFieldsData
@@ -57,7 +46,7 @@ const Contact = ({
             }}
           >
             <Image
-              src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${branch.thumbnail?.url || ""}`}
+              src={branch.thumbnail?.url || ""}
               alt={branchTitle}
               width={200}
               height={200}
@@ -101,9 +90,7 @@ const Contact = ({
 
   const renderContent = () => {
     if (branchList) {
-      const branchesToRender = graphqlBranches || [];
-
-      if (!branchesToRender.length && !graphqlLoading) {
+      if (!branches.length) {
         return (
           <div style={{ textAlign: "center", padding: "20px" }}>
             <p>Салбар байршил олдсонгүй</p>
@@ -113,17 +100,7 @@ const Contact = ({
 
       return (
         <Row gutter={32} className="mt-2 pt-2">
-          {branchesToRender.map(renderBranch)}
-          {graphqlLoading && (
-            <Col span={24} style={{ textAlign: "center", padding: "20px" }}>
-              <p>Салбарын мэдээлэл ачааллаж байна...</p>
-            </Col>
-          )}
-          {graphqlError && (
-            <Col span={24} style={{ textAlign: "center", padding: "20px" }}>
-              <p>GraphQL алдаа: {graphqlError}</p>
-            </Col>
-          )}
+          {branches.map(renderBranch)}
         </Row>
       );
     }
@@ -161,15 +138,13 @@ const Contact = ({
     );
   };
 
-  // GoogleMap-д дамжуулах өгөгдөл
-  const mapItems = graphqlBranches || [];
 
   return (
     <>
       {/* Google Map зөвхөн салбарын жагсаалт байх үед л харуулна */}
       {branchList && (
         <div className="w-100 map index-map">
-          <GoogleMap items={mapItems} />
+          <GoogleMap items={branches} />
         </div>
       )}
       {renderContent()}

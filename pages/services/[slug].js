@@ -6,7 +6,7 @@ import Layout from "../../components/layouts/Layout";
 import { getData, __, regex } from "../../utils";
 import MyLink from "../../components/MyLink";
 import useTranslation from "next-translate/useTranslation";
-import { useGraphQL } from "../../providers/ApolloProvider";
+import { posts, getPost } from "../../data/cms";
 
 import {
   ShareAltOutlined,
@@ -20,132 +20,9 @@ import {
   LinkedinShareButton,
 } from "react-share";
 
-const GET_SERVICES_DETAIL = `
-query Post($id: String) {
-  cmsPost(_id: $id) {
-    _id
-    type
-    clientPortalId
-    title
-    slug
-    content
-    excerpt
-    categoryIds
-    status
-    tagIds
-    authorId
-    featured
-    featuredDate
-    scheduledDate
-    autoArchiveDate
-    reactions
-    reactionCounts
-    thumbnail {
-      url
-      type
-      name
-      __typename
-    }
-    images {
-      url
-      type
-      name
-      __typename
-    }
-    video {
-      url
-      type
-      name
-      __typename
-    }
-    audio {
-      url
-      type
-      name
-      __typename
-    }
-    documents {
-      url
-      type
-      name
-      __typename
-    }
-    attachments {
-      url
-      type
-      name
-      __typename
-    }
-    pdfAttachment {
-      pages {
-        url
-        name
-        type
-        size
-        duration
-        __typename
-      }
-      __typename
-    }
-    videoUrl
-    createdAt
-    updatedAt
-    authorKind
-    author {
-      ... on User {
-        _id
-        username
-        email
-        details {
-          fullName
-          shortName
-          avatar
-          firstName
-          lastName
-          middleName
-          __typename
-        }
-        __typename
-      }
-      ... on ClientPortalUser {
-        _id
-        fullName
-        firstName
-        lastName
-        email
-        username
-        customer {
-          avatar
-          __typename
-        }
-        __typename
-      }
-      __typename
-    }
-    categories {
-      _id
-      name
-      slug
-      __typename
-    }
-    tags {
-      _id
-      name
-      __typename
-    }
-    customFieldsData
-    __typename
-  }
-}
-`;
-
 const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
   const { t } = useTranslation("common");
   const [width, setWidth] = useState(0);
-  const [graphqlPost, setGraphqlPost] = useState(null);
-  const [graphqlLoading, setGraphqlLoading] = useState(false);
-  const [graphqlError, setGraphqlError] = useState(null);
-  const { query } = useGraphQL();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -153,50 +30,7 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
     }
   }, []);
 
-  const fetchNewsDetail = async (identifier) => {
-    if (!identifier) return;
-
-    setGraphqlLoading(true);
-    setGraphqlError(null);
-
-    try {
-      const variables = {
-        id: identifier,
-      };
-
-      const result = await query(GET_SERVICES_DETAIL, variables);
-
-      if (result?.cmsPost) {
-        setGraphqlPost(result.cmsPost);
-      } else if (result?.data?.cmsPost) {
-        setGraphqlPost(result.data.cmsPost);
-      }
-    } catch (error) {
-      console.error("GraphQL error:", error);
-      setGraphqlError(error.message);
-    } finally {
-      setGraphqlLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pathParts = window.location.pathname.split("/");
-      const urlSlug = pathParts[pathParts.length - 1];
-      if (urlSlug && urlSlug !== "news") {
-        fetchNewsDetail(urlSlug);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const postIdentifier = post?.slug || post?._id || post?.id;
-    if (postIdentifier && postIdentifier !== post?.slug) {
-      fetchNewsDetail(postIdentifier);
-    }
-  }, [post]);
-
-  const currentPost = graphqlPost || post;
+  const currentPost = post;
 
   if (!currentPost) {
     return <Error statusCode={404} />;
@@ -278,7 +112,7 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
   return (
     <Layout
       menu={mainMenu}
-      loading={loading || graphqlLoading}
+      loading={loading}
       title={regex(postTitle)}
       image={postImage}
       stickyMenu={stickyMenu}
@@ -295,7 +129,7 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
                   {postImage && (
                     <img
                       className="w-100 p-1"
-                      src={`https://xacleasing.app.erxes.io/gateway/read-file?key=${postImage}`}
+                      src={postImage}
                       alt={postTitle}
                     />
                   )}
@@ -304,12 +138,6 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
                       className="my-2"
                       dangerouslySetInnerHTML={{ __html: postContent }}
                     />
-
-                    {graphqlError && (
-                      <div className="error-message">
-                        <p>GraphQL алдаа: {graphqlError}</p>
-                      </div>
-                    )}
                   </div>
                 </div>
                 {renderNewsShare()}
@@ -366,17 +194,11 @@ const NewsDetail = ({ category, post, loading, mainMenu, stickyMenu }) => {
 };
 
 export async function getStaticProps(context) {
-  const slug = context.params?.slug;
+  const post = getPost(context.params?.slug);
 
-  const post = {
-    id: slug,
-    _id: slug,
-    slug: slug,
-    title: "",
-    content: "",
-    excerpt: "",
-    categories: [],
-  };
+  if (!post) {
+    return { notFound: true };
+  }
 
   const category = {
     slug: "services",
@@ -385,16 +207,13 @@ export async function getStaticProps(context) {
 
   return {
     props: { post, category },
-    revalidate: 300,
   };
 }
 
-export async function getStaticPaths(context) {
-  // Бүх slug-уудыг runtime-д шийдэхийн тулд хоосон paths буцаах
-  // Энэ нь GraphQL ID болон WordPress slug хоёулангийг дэмжинэ
+export async function getStaticPaths() {
   return {
-    paths: [],
-    fallback: "blocking",
+    paths: Object.keys(posts).map((slug) => ({ params: { slug } })),
+    fallback: false,
   };
 }
 

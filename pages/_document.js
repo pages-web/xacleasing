@@ -33,26 +33,6 @@ export default class MyDocument extends Document {
             }}
           />
 
-          {/* Erxes chat */}
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                        window.erxesSettings = {
-                            messenger: {
-                              brand_id: "exdvMb",
-                              css: '.erxes-launcher { background-size: 30px; right: 12px; }'
-                            },
-                          };
-                          (function() {
-                            var script = document.createElement('script');
-                            script.src = "https://erxes.xacleasing.mn/widgets/build/messengerWidget.bundle.js";
-                            script.async = true;
-                            var entry = document.getElementsByTagName('script')[0];
-                            entry.parentNode.insertBefore(script, entry);
-                          })()`,
-            }}
-          />
-
           {/* FB chat */}
           <div id="fb-root"></div>
           <div id="fb-customer-chat" className="fb-customerchat">

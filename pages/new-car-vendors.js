@@ -1,88 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Layout from "../components/layouts/Layout";
 import { Col, Row, Modal, Card } from "antd";
 import { __ } from "../utils";
-import { useGraphQL } from "../providers/ApolloProvider";
+import { getPosts } from "../data/cms";
 import Slider from "react-slick";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const GET_VENDORS = `
-query PostsList(
-    $clientPortalId: String!
-    $tagIds: [String]
-    $categoryIds: [String]
-    $page: Int
-    $perPage: Int
-  ) {
-    cmsPostList(
-      clientPortalId: $clientPortalId
-      tagIds: $tagIds
-      categoryIds: $categoryIds
-      page: $page
-      perPage: $perPage
-    ) {
-      posts {
-        _id
-        title
-        excerpt
-        thumbnail {
-          url
-        }
-        images {
-          url
-        }
-        
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-
 const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
-  const { query } = useGraphQL();
-  const [graphqlVendors, setGraphqlVendors] = useState([]);
-  const [vendorsLoading, setVendorsLoading] = useState(false);
+  const vendors = getPosts("vendors");
   const [activeCategory, setActiveCategory] = useState(4);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
-
-  const fetchVendorsWithGraphQL = async () => {
-    setVendorsLoading(true);
-
-    try {
-      const variables = {
-        clientPortalId:
-          process.env.NEXT_PUBLIC_ERXES_CLIENT_PORTAL_ID ||
-          "cp-wzk8M6gshwVUeGnfdR",
-        tagIds: ["yPfazYFeIaYr1OY5mhUxH"],
-        page: 1,
-        perPage: 100,
-      };
-
-      console.log("Fetching vendors with GraphQL...", variables);
-      const result = await query(GET_VENDORS, variables);
-      console.log("GraphQL vendors result:", result);
-
-      if (result?.cmsPostList?.posts) {
-        console.log("Raw vendor data:", result.cmsPostList.posts);
-        setGraphqlVendors(result.cmsPostList.posts);
-      }
-
-      // Categories are now hardcoded based on excerpt values
-    } catch (error) {
-      console.error("Error fetching vendors:", error);
-    } finally {
-      setVendorsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchVendorsWithGraphQL();
-  }, []);
 
   // Function to get category ID based on excerpt
   const getCategoryFromExcerpt = (excerpt) => {
@@ -98,12 +29,9 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
     }
   };
 
-  // Transform GraphQL data to match VendorList expected props
-  const transformedVendorPosts = graphqlVendors.map((vendor) => {
+  // Transform CMS data to match VendorList expected props
+  const transformedVendorPosts = vendors.map((vendor) => {
     const categoryId = getCategoryFromExcerpt(vendor.excerpt);
-    console.log(
-      `Vendor: ${vendor.title}, Excerpt: ${vendor.excerpt}, Category ID: ${categoryId}`
-    );
 
     return {
       id: vendor._id,
@@ -116,18 +44,13 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
         ? {
             "wp:featuredmedia": [
               {
-                source_url: vendor.thumbnail.url.startsWith("http")
-                  ? vendor.thumbnail.url
-                  : `https://xacleasing.app.erxes.io/gateway/read-file?key=${vendor.thumbnail.url}`,
+                source_url: vendor.thumbnail.url,
               },
             ],
           }
         : {},
     };
   });
-
-  console.log("Transformed vendor posts:", transformedVendorPosts);
-  console.log("Current theme state:", isDarkTheme);
 
   // Count vendors by category
   const getVendorCount = (categoryId) => {
@@ -229,14 +152,7 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
             <Col xs={22} sm={22} md={20} lg={18} xl={16} className="h-100">
               <div className="page-wrapper-content h-100">
                 <div className="page-wrapper p-3 w-100">
-                  {vendorsLoading && (
-                    <div style={{ textAlign: "center", padding: "40px" }}>
-                      <p>Өгөгдөл ачааллаж байна...</p>
-                    </div>
-                  )}
-
-                  {!vendorsLoading && (
-                    <>
+                  <>
                       <div
                         style={{
                           display: "flex",
@@ -428,10 +344,9 @@ const NewCarVendorsPage = ({ loading, mainMenu, stickyMenu }) => {
                           />
                         )}
                       </Modal>
-                    </>
-                  )}
+                  </>
 
-                  {!vendorsLoading && transformedVendorPosts.length === 0 && (
+                  {transformedVendorPosts.length === 0 && (
                     <div style={{ textAlign: "center", padding: "40px" }}>
                       <p>Борлуулагч олдсонгүй</p>
                     </div>
